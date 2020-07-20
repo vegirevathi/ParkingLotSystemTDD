@@ -12,7 +12,6 @@ public class ParkingLotSystemTest {
     @Before
     public void setUp() throws Exception {
         parkingLotSystem = new ParkingLotSystem();
-        vehicle = new Object();
         this.parkingLotSystem.setParkingLotCapacity(2);
     }
 
@@ -42,6 +41,7 @@ public class ParkingLotSystemTest {
     @Test
     public void givenAVehicle_WhenNotParkedQuery_ShouldReturnFalse() {
         try {
+            Object vehicle = new Object();
             parkingLotSystem.park(vehicle);
             boolean park = parkingLotSystem.isVehicleParked(null);
             Assert.assertFalse(park);
@@ -69,8 +69,10 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenAVehicleOwner_ShouldReturnFullSignal_WhenVehicleLotIsFull() throws ParkingLotException {
-        parkingLotSystem.park(vehicle);
-        parkingLotSystem.park(vehicle);
+        Object vehicle1 = new Object();
+        Object vehicle2 = new Object();
+        parkingLotSystem.park(vehicle1);
+        parkingLotSystem.park(vehicle2);
         ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
         boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
         Assert.assertTrue(parkingFull);
@@ -78,6 +80,7 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenAVehicleOwner_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
+        Object vehicle = new Object();
         parkingLotSystem.park(vehicle);
         ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
         boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
@@ -86,8 +89,10 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenAAirportSecurity_ShouldReturnFullSignal_WhenVehicleLotIsFull() throws ParkingLotException {
-        parkingLotSystem.park(vehicle);
-        parkingLotSystem.park(vehicle);
+        Object vehicle1 = new Object();
+        Object vehicle2 = new Object();
+        parkingLotSystem.park(vehicle1);
+        parkingLotSystem.park(vehicle2);
         ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
         boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.AIRPORTSECURITY, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
         Assert.assertTrue(parkingFull);
@@ -95,6 +100,7 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenAAirportSecurity_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
+        Object vehicle = new Object();
         parkingLotSystem.park(vehicle);
         ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
         boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.AIRPORTSECURITY, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
