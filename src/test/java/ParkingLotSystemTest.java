@@ -1,4 +1,5 @@
-import ParkingLotSystemTDD.ParkingLotException;
+import ParkingLotSystemTDD.Exception.ParkingLotException;
+import ParkingLotSystemTDD.Service.ParkingLotSystemDisplay;
 import ParkingLotSystemTDD.Service.ParkingLotSystem;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,6 +13,7 @@ public class ParkingLotSystemTest {
     public void setUp() throws Exception {
         parkingLotSystem = new ParkingLotSystem();
         vehicle = new Object();
+        this.parkingLotSystem.setParkingLotCapacity(2);
     }
 
     @Test
@@ -29,19 +31,10 @@ public class ParkingLotSystemTest {
     public void givenAVehicle_WhenAlreadyParked_ShouldThrowException() {
         try {
             parkingLotSystem.park(vehicle);
+            parkingLotSystem.park(vehicle);
             parkingLotSystem.park(new Object());
         } catch (ParkingLotException e) {
             Assert.assertEquals("Parking Lot is full", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void givenAVehicle_WhenNotParked_ShouldThroeException() {
-        try {
-            parkingLotSystem.park(null);
-        } catch (ParkingLotException e) {
-            Assert.assertEquals("Parking Lot is empty", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -72,5 +65,22 @@ public class ParkingLotSystemTest {
             Assert.assertEquals("Vehicle is not parked", e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void givenAVehicleOwner_ShouldReturnFullSignal_WhenVehicleLotIsFull() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.park(vehicle);
+        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
+        boolean parkingFull = parkingLotSystemDisplay.isParkingFull(parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        Assert.assertTrue(parkingFull);
+    }
+
+    @Test
+    public void givenAVehicleOwner_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
+        boolean parkingFull = parkingLotSystemDisplay.isParkingFull(parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        Assert.assertFalse(parkingFull);
     }
 }

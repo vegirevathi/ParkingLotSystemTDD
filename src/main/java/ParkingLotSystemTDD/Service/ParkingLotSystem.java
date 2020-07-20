@@ -1,26 +1,34 @@
 package ParkingLotSystemTDD.Service;
 
-import ParkingLotSystemTDD.ParkingLotException;
+import ParkingLotSystemTDD.Exception.ParkingLotException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParkingLotSystem {
-    private Object vehicle;
+    public int parkingLotCapacity;
+    public List vehicle;
+
+    public ParkingLotSystem() {
+        this.vehicle = new ArrayList();
+    }
+
+    public void setParkingLotCapacity(int parkingLotCapacity) {
+        this.parkingLotCapacity = parkingLotCapacity;
+    }
 
     public void park(Object vehicle) throws ParkingLotException {
-        if (this.vehicle != null)
+        if (this.vehicle.size() == parkingLotCapacity)
             throw new ParkingLotException("Parking Lot is full", ParkingLotException.ExceptionType.PARKING_LOT_FULL);
-        this.vehicle = vehicle;
-        if (this.vehicle == null)
-            throw new ParkingLotException("Parking Lot is empty", ParkingLotException.ExceptionType.PARKING_LOT_EMPTY);
+        this.vehicle.add(vehicle);
     }
 
     public boolean isVehicleParked(Object vehicle) {
-        return this.vehicle.equals(vehicle);
+        return this.vehicle.contains(vehicle);
     }
 
     public boolean unPark(Object vehicle) throws ParkingLotException {
-        //if (this.vehicle == null) return false;
-        if (this.vehicle != null && this.vehicle.equals(vehicle)) {
-            this.vehicle = null;
+        if (this.vehicle.size() != 0 && this.vehicle.contains(vehicle)) {
+            this.vehicle.remove(vehicle);
             return true;
         }
         throw new ParkingLotException("Vehicle is not parked", ParkingLotException.ExceptionType.NO_SUCH_VEHICLE_PARKED);

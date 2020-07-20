@@ -1,4 +1,4 @@
-package ParkingLotSystemTDD;
+package ParkingLotSystemTDD.Exception;
 
 public class ParkingLotException extends Throwable {
     public enum ExceptionType {
