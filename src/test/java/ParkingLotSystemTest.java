@@ -35,12 +35,11 @@ public class ParkingLotSystemTest {
             parkingLotSystem.park(new Object());
         } catch (ParkingLotException e) {
             Assert.assertEquals("Parking Lot is full", e.getMessage());
-            e.printStackTrace();
         }
     }
 
     @Test
-    public void givenAVehicle_WhenNotParkedQuery_ShouldReturnFalse() {
+    public void givenAVehicle_WhenNotParked_ShouldReturnFalse() {
         try {
             parkingLotSystem.park(vehicle);
             boolean park = parkingLotSystem.isVehicleParked(null);
@@ -63,7 +62,6 @@ public class ParkingLotSystemTest {
             parkingLotSystem.unPark(vehicle);
         } catch (ParkingLotException e) {
             Assert.assertEquals("Vehicle is not parked", e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -99,5 +97,22 @@ public class ParkingLotSystemTest {
         ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
         boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.AIRPORTSECURITY, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
         Assert.assertFalse(parkingFull);
+    }
+
+    @Test
+    public void givenAVehicleOwner_ShouldTakeInFullSignal_WhenVehicleLotHasSpace() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
+        boolean parkingHasSpace = parkingLotSystemDisplay.isParkingHasSpace(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        Assert.assertTrue(parkingHasSpace);
+    }
+
+    @Test
+    public void givenAVehicleOwner_ShouldNotTakeInFullSignal_WhenVehicleLotHasNoSpace() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.park(vehicle);
+        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
+        boolean parkingHasSpace = parkingLotSystemDisplay.isParkingHasSpace(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        Assert.assertFalse(parkingHasSpace);
     }
 }
