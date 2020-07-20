@@ -27,10 +27,9 @@ public class ParkingLotSystem {
     }
 
     public boolean unPark(Object vehicle) throws ParkingLotException {
-        if (this.vehicle.size() != 0 && this.vehicle.contains(vehicle)) {
-            this.vehicle.remove(vehicle);
-            return true;
-        }
-        throw new ParkingLotException("Vehicle is not parked", ParkingLotException.ExceptionType.NO_SUCH_VEHICLE_PARKED);
+        if (!this.vehicle.contains(vehicle))
+            throw new ParkingLotException("Vehicle is not parked", ParkingLotException.ExceptionType.NO_SUCH_VEHICLE_PARKED);
+        this.vehicle.remove(vehicle);
+        return true;
     }
 }
