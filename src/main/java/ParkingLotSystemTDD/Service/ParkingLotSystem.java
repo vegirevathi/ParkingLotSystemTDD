@@ -6,22 +6,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParkingLotSystem {
-    public int parkingLotCapacity;
-    public List vehicle;
+    private final List<ParkingLotObserver> observers;
+    private int parkingLotCapacity;
+    private List<Object> vehicle;
 
     public ParkingLotSystem() {
-        this.vehicle = new ArrayList();
+        this.observers = new ArrayList<>();
+        this.vehicle = new ArrayList<>();
     }
 
+    public void registerParkingLotObserver(ParkingLotObserver observer) {
+        this.observers.add(observer);
+    }
     public void setParkingLotCapacity(int parkingLotCapacity) {
         this.parkingLotCapacity = parkingLotCapacity;
     }
 
     public void park(Object vehicle) throws ParkingLotException {
-        if (this.vehicle.size() == parkingLotCapacity)
-            throw new ParkingLotException("Parking Lot is full", ParkingLotException.e.PARKING_LOT_FULL);
         if (this.vehicle.contains(vehicle))
             throw new ParkingLotException("Vehicle is already parked", ParkingLotException.e.ALREADY_PARKED);
+        if (this.vehicle.size() == parkingLotCapacity)
+            throw new ParkingLotException("Parking Lot is full", ParkingLotException.e.PARKING_LOT_FULL);
+            for (ParkingLotObserver observer: observers) {
+                observer.capacityIsFull();
+            }
         this.vehicle.add(vehicle);
     }
 

@@ -1,5 +1,6 @@
 import ParkingLotSystemTDD.Exception.ParkingLotException;
-import ParkingLotSystemTDD.Service.ParkingLotInfo;
+import ParkingLotSystemTDD.Service.AirportSecurity;
+import ParkingLotSystemTDD.Service.ParkingLotOwner;
 import ParkingLotSystemTDD.Service.ParkingLotSystem;
 import org.junit.Assert;
 import org.junit.Before;
@@ -83,62 +84,50 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenAVehicleOwner_ShouldReturnFullSignal_WhenVehicleLotIsFull() throws ParkingLotException {
+    public void givenWhenParkingLotIsFull_ShouldInformTheParkingLotOwner() {
+        ParkingLotOwner parkingLotOwner = new ParkingLotOwner();
+        parkingLotSystem.registerParkingLotObserver(parkingLotOwner);
         Object vehicle1 = new Object();
         Object vehicle2 = new Object();
-        parkingLotSystem.park(vehicle1);
-        parkingLotSystem.park(vehicle2);
-        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
-        boolean parkingFull = display.isParkingFull(parkingLotSystem);
-        Assert.assertTrue(parkingFull);
+        try {
+            parkingLotSystem.park(vehicle1);
+            parkingLotSystem.park(vehicle2);
+            parkingLotSystem.park(new Object());
+        } catch (ParkingLotException e) {
+            boolean parkingFull = parkingLotOwner.isCapacityFull();
+            Assert.assertTrue(parkingFull);
+        }
     }
 
     @Test
-    public void givenAVehicleOwner_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
-        Object vehicle = new Object();
-        parkingLotSystem.park(vehicle);
-        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
-        boolean parkingFull = display.isParkingFull(parkingLotSystem);
-        Assert.assertFalse(parkingFull);
-    }
-
-    @Test
-    public void givenAAirportSecurity_ShouldReturnFullSignal_WhenVehicleLotIsFull() throws ParkingLotException {
+    public void givenWhenParkingLotIsFull_ShouldInformTheAirportSecurity() {
+        AirportSecurity airportSecurity = new AirportSecurity();
+        parkingLotSystem.registerParkingLotObserver(airportSecurity);
         Object vehicle1 = new Object();
         Object vehicle2 = new Object();
-        parkingLotSystem.park(vehicle1);
-        parkingLotSystem.park(vehicle2);
-        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.AIRPORT_SECURITY);
-        boolean parkingFull = display.isParkingFull(parkingLotSystem);
-        Assert.assertTrue(parkingFull);
+        try {
+            parkingLotSystem.park(vehicle1);
+            parkingLotSystem.park(vehicle2);
+            parkingLotSystem.park(new Object());
+        } catch (ParkingLotException e) {
+            boolean parkingFull = airportSecurity.isCapacityFull();
+            Assert.assertTrue(parkingFull);
+        }
     }
 
     @Test
-    public void givenAAirportSecurity_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
-        Object vehicle = new Object();
-        parkingLotSystem.park(vehicle);
-        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.AIRPORT_SECURITY);
-        boolean parkingFull = display.isParkingFull(parkingLotSystem);
-        Assert.assertFalse(parkingFull);
-    }
-
-    @Test
-    public void givenAVehicleOwner_ShouldTakeInFullSignal_WhenVehicleLotHasSpace() throws ParkingLotException {
-        Object vehicle = new Object();
-        parkingLotSystem.park(vehicle);
-        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
-        boolean parkingHasSpace = display.isParkingFull(parkingLotSystem);
-        Assert.assertFalse(parkingHasSpace);
-    }
-
-    @Test
-    public void givenAVehicleOwner_ShouldNotTakeInFullSignal_WhenVehicleLotHasNoSpace() throws ParkingLotException {
+    public void givenWhenParkingLotSpaceIsAvailableAfterFull_ShouldReturnTrue() throws ParkingLotException {
+        ParkingLotOwner parkingLotOwner = new ParkingLotOwner();
+        parkingLotSystem.registerParkingLotObserver(parkingLotOwner);
         Object vehicle1 = new Object();
         Object vehicle2 = new Object();
-        parkingLotSystem.park(vehicle1);
-        parkingLotSystem.park(vehicle2);
-        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
-        boolean parkingHasSpace = display.isParkingFull(parkingLotSystem);
-        Assert.assertTrue(parkingHasSpace);
+        try {
+            parkingLotSystem.park(vehicle1);
+            parkingLotSystem.park(vehicle2);
+        } catch (ParkingLotException e) {
+            parkingLotSystem.unPark(vehicle1);
+            boolean parkingFull = parkingLotOwner.isCapacityFull();
+            Assert.assertFalse(parkingFull);
+        }
     }
 }
