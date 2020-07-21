@@ -1,5 +1,5 @@
 import ParkingLotSystemTDD.Exception.ParkingLotException;
-import ParkingLotSystemTDD.Service.ParkingLotSystemDisplay;
+import ParkingLotSystemTDD.Service.ParkingLotInfo;
 import ParkingLotSystemTDD.Service.ParkingLotSystem;
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,10 +7,9 @@ import org.junit.Test;
 
 public class ParkingLotSystemTest {
     ParkingLotSystem parkingLotSystem = null;
-    Object vehicle;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         parkingLotSystem = new ParkingLotSystem();
         this.parkingLotSystem.setParkingLotCapacity(2);
     }
@@ -28,13 +27,27 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenAVehicle_WhenAlreadyParked_ShouldThrowException() {
+    public void givenAVehicle_WhenParkingLotFull_ShouldThrowException() {
         try {
-            parkingLotSystem.park(vehicle);
-            parkingLotSystem.park(vehicle);
-            parkingLotSystem.park(new Object());
+            Object vehicle1 = new Object();
+            parkingLotSystem.park(vehicle1);
+            Object vehicle2 = new Object();
+            parkingLotSystem.park(vehicle2);
+            Object vehicle3 = new Object();
+            parkingLotSystem.park(vehicle3);
         } catch (ParkingLotException e) {
             Assert.assertEquals("Parking Lot is full", e.getMessage());
+        }
+    }
+
+    @Test
+    public void givenAVehicle_WhenAlreadyParked_ShouldThrowException() {
+        try {
+            Object vehicle = new Object();
+            parkingLotSystem.park(vehicle);
+            parkingLotSystem.park(vehicle);
+        } catch (ParkingLotException e) {
+            Assert.assertEquals("Vehicle is already parked", e.getMessage());
         }
     }
 
@@ -54,7 +67,8 @@ public class ParkingLotSystemTest {
     public void givenAVehicle_WhenUnParked_ShouldReturnTrue() throws ParkingLotException {
         Object vehicle = new Object();
         parkingLotSystem.park(vehicle);
-        boolean unPark = parkingLotSystem.unPark(vehicle);
+        parkingLotSystem.unPark(vehicle);
+        boolean unPark = parkingLotSystem.isVehicleUnParked(vehicle);
         Assert.assertTrue(unPark);
     }
 
@@ -74,8 +88,8 @@ public class ParkingLotSystemTest {
         Object vehicle2 = new Object();
         parkingLotSystem.park(vehicle1);
         parkingLotSystem.park(vehicle2);
-        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
-        boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
+        boolean parkingFull = display.isParkingFull(parkingLotSystem);
         Assert.assertTrue(parkingFull);
     }
 
@@ -83,8 +97,8 @@ public class ParkingLotSystemTest {
     public void givenAVehicleOwner_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
         Object vehicle = new Object();
         parkingLotSystem.park(vehicle);
-        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
-        boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
+        boolean parkingFull = display.isParkingFull(parkingLotSystem);
         Assert.assertFalse(parkingFull);
     }
 
@@ -94,8 +108,8 @@ public class ParkingLotSystemTest {
         Object vehicle2 = new Object();
         parkingLotSystem.park(vehicle1);
         parkingLotSystem.park(vehicle2);
-        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
-        boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.AIRPORTSECURITY, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.AIRPORT_SECURITY);
+        boolean parkingFull = display.isParkingFull(parkingLotSystem);
         Assert.assertTrue(parkingFull);
     }
 
@@ -103,8 +117,8 @@ public class ParkingLotSystemTest {
     public void givenAAirportSecurity_ShouldNotReturnFullSignal_WhenVehicleLotIsNotFull() throws ParkingLotException {
         Object vehicle = new Object();
         parkingLotSystem.park(vehicle);
-        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
-        boolean parkingFull = parkingLotSystemDisplay.isParkingFull(ParkingLotSystemDisplay.Person.AIRPORTSECURITY, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
+        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.AIRPORT_SECURITY);
+        boolean parkingFull = display.isParkingFull(parkingLotSystem);
         Assert.assertFalse(parkingFull);
     }
 
@@ -112,9 +126,9 @@ public class ParkingLotSystemTest {
     public void givenAVehicleOwner_ShouldTakeInFullSignal_WhenVehicleLotHasSpace() throws ParkingLotException {
         Object vehicle = new Object();
         parkingLotSystem.park(vehicle);
-        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
-        boolean parkingHasSpace = parkingLotSystemDisplay.isParkingHasSpace(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
-        Assert.assertTrue(parkingHasSpace);
+        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
+        boolean parkingHasSpace = display.isParkingFull(parkingLotSystem);
+        Assert.assertFalse(parkingHasSpace);
     }
 
     @Test
@@ -123,8 +137,8 @@ public class ParkingLotSystemTest {
         Object vehicle2 = new Object();
         parkingLotSystem.park(vehicle1);
         parkingLotSystem.park(vehicle2);
-        ParkingLotSystemDisplay parkingLotSystemDisplay = new ParkingLotSystemDisplay();
-        boolean parkingHasSpace = parkingLotSystemDisplay.isParkingHasSpace(ParkingLotSystemDisplay.Person.PARKINGLOTOWNER, parkingLotSystem.vehicle.size(), parkingLotSystem.parkingLotCapacity);
-        Assert.assertFalse(parkingHasSpace);
+        ParkingLotInfo display = new ParkingLotInfo(ParkingLotInfo.Person.PARKING_LOT_OWNER);
+        boolean parkingHasSpace = display.isParkingFull(parkingLotSystem);
+        Assert.assertTrue(parkingHasSpace);
     }
 }
