@@ -3,16 +3,18 @@ package ParkingLotSystemTDD.Service;
 import ParkingLotSystemTDD.Exception.ParkingLotException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParkingLotSystem {
     private final List<ParkingLotObserver> observers;
     private int parkingLotCapacity;
-    private List<Object> vehicle;
+    private Map<Integer, String> parkingMap;
 
     public ParkingLotSystem() {
         this.observers = new ArrayList<>();
-        this.vehicle = new ArrayList<>();
+        this.parkingMap = new HashMap<>();
     }
 
     public void registerParkingLotObserver(ParkingLotObserver observer) {
@@ -22,28 +24,28 @@ public class ParkingLotSystem {
         this.parkingLotCapacity = parkingLotCapacity;
     }
 
-    public void park(Object vehicle) throws ParkingLotException {
-        if (this.vehicle.contains(vehicle))
+    public void park(int slotNumber, String carNumber) throws ParkingLotException {
+        if (this.parkingMap.containsValue(carNumber))
             throw new ParkingLotException("Vehicle is already parked", ParkingLotException.e.ALREADY_PARKED);
-        if (this.vehicle.size() == parkingLotCapacity)
+        if (this.parkingMap.size() == parkingLotCapacity)
             throw new ParkingLotException("Parking Lot is full", ParkingLotException.e.PARKING_LOT_FULL);
             for (ParkingLotObserver observer: observers) {
                 observer.capacityIsFull();
             }
-        this.vehicle.add(vehicle);
+        this.parkingMap.put(slotNumber, carNumber);
     }
 
-    public boolean isVehicleParked(Object vehicle) {
-        return this.vehicle.contains(vehicle);
+    public boolean isVehicleParked(String carNumber) {
+        return this.parkingMap.containsValue(carNumber);
     }
 
-    public void unPark(Object vehicle) throws ParkingLotException {
-        if (!this.vehicle.contains(vehicle))
+    public void unPark(int slotNumber, String carNumber) throws ParkingLotException {
+        if (!this.parkingMap.containsValue(carNumber))
             throw new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
-        this.vehicle.remove(vehicle);
+        this.parkingMap.remove(slotNumber, carNumber);
     }
 
-    public boolean isVehicleUnParked(Object vehicle) {
-        return !this.vehicle.contains(vehicle);
+    public boolean isVehicleUnParked(String carNumber) {
+        return !this.parkingMap.containsValue(carNumber);
     }
 }
