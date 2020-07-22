@@ -1,16 +1,11 @@
-package ParkingLotSystemTDD.Service;
+package parkinglotsystem.observer;
 
-public class ParkingLotOwner implements  ParkingLotObserver{
+public class AirportSecurity implements ParkingLotObserver {
     private boolean isFullCapacity;
 
     @Override
     public void capacityIsFull() {
         isFullCapacity = true;
-    }
-
-    @Override
-    public void capacityIsAvailable() {
-        isFullCapacity = false;
     }
 
     public boolean isCapacityFull() {
