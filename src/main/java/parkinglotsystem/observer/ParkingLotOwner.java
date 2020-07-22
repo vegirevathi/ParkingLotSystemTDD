@@ -16,8 +16,8 @@ public class ParkingLotOwner implements ParkingLotObserver {
 
     public static Integer getSlotToPark(Map<Integer, String> parkingMap) {
         for (Integer slotNumber = 1; slotNumber <= parkingMap.size(); slotNumber++)
-            if (parkingMap.get(slotNumber) == null )
+            if (parkingMap.get(slotNumber) == null)
                 return slotNumber;
-            return 0;
+        return 0;
     }
 }

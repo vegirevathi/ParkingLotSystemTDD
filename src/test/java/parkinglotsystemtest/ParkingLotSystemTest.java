@@ -8,6 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class ParkingLotSystemTest {
     ParkingLotSystem parkingLotSystem = null;
 
@@ -63,7 +66,7 @@ public class ParkingLotSystemTest {
     @Test
     public void givenAVehicle_WhenUnParked_ShouldReturnTrue() {
         parkingLotSystem.park("AP 1234");
-        parkingLotSystem.unPark(0,"AP 1234");
+        parkingLotSystem.unPark(0, "AP 1234");
         boolean unPark = parkingLotSystem.isVehicleUnParked("AP 1234");
         Assert.assertTrue(unPark);
     }
@@ -71,7 +74,7 @@ public class ParkingLotSystemTest {
     @Test
     public void givenAVehicle_WhenNotParked_AndTryingForUnPark_ShouldThrowException() {
         try {
-            parkingLotSystem.unPark( 0,"AP 1234");
+            parkingLotSystem.unPark(0, "AP 1234");
         } catch (ParkingLotException e) {
             Assert.assertEquals("Vehicle is not parked", e.getMessage());
         }
@@ -130,10 +133,29 @@ public class ParkingLotSystemTest {
     @Test
     public void givenCarNumber_WhenNotFoundInParkingSlot_ShouldThrowException() {
         try {
-            parkingLotSystem.park( "AP 1234");
+            parkingLotSystem.park("AP 1234");
             parkingLotSystem.findCarNumber("AP 1235");
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.CAR_NUMBER_MISMATCH, e.type);
+        }
+    }
+
+    @Test
+    public void givenCarWhenParkedInParkingLot_ShouldReturnParkingTime() {
+        parkingLotSystem.park("AP 1234");
+        String parkedTime = parkingLotSystem.getVehicleParkedTime("AP 1234");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
+        Assert.assertEquals(LocalDateTime.now().format(format), parkedTime);
+    }
+
+    @Test
+    public void givenCarWhenNotParkedInParkingLot_ShouldThrowException() {
+        try {
+            String parkedTime = parkingLotSystem.getVehicleParkedTime("AP 1234");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
+            Assert.assertEquals(LocalDateTime.now().format(format), parkedTime);
+        } catch (ParkingLotException e) {
+            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
     }
 }
