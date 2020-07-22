@@ -48,4 +48,13 @@ public class ParkingLotSystem {
     public boolean isVehicleUnParked(String carNumber) {
         return !this.parkingMap.containsValue(carNumber);
     }
+
+    public int findCarNumber(String carNumber) throws ParkingLotException {
+        if (!parkingMap.containsValue(carNumber))
+            throw new ParkingLotException("Vehicle number not found", ParkingLotException.e.CAR_NUMBER_MISMATCH);
+        return parkingMap.keySet()
+                .stream()
+                .filter(key -> carNumber.equals(parkingMap.get(key)))
+                .findFirst().get();
+    }
 }

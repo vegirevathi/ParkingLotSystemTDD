@@ -119,15 +119,27 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenVehicleWhenParkedAtSlot_ShouldReturnTrue() {
-        Object vehicle = new Object();
+    public void givenVehicleWhenParkedAtSlot_ShouldReturnTrue() throws ParkingLotException {
         ParkingAttendant parkingAttendant = new ParkingAttendant();
-        try {
             parkingLotSystem.park(1, "AP 1234");
             int slotNumber = parkingAttendant.allottedSlot();
             Assert.assertEquals(1, slotNumber);
+    }
+
+    @Test
+    public void givenVehicleWhenFindingWithCarNumber_ShouldReturnTrue() throws ParkingLotException {
+        parkingLotSystem.park(1, "AP 1234");
+        int slotNumber = parkingLotSystem.findCarNumber("AP 1234");
+        Assert.assertEquals(1, slotNumber);
+    }
+
+    @Test
+    public void givenCarNumber_WhenNotFoundInParkingSlot_ShouldThrowException() {
+        try {
+            parkingLotSystem.park(1, "AP 1234");
+            parkingLotSystem.findCarNumber("AP 1235");
         } catch (ParkingLotException e) {
-            e.printStackTrace();
+            Assert.assertEquals(ParkingLotException.e.CAR_NUMBER_MISMATCH, e.type);
         }
     }
 }

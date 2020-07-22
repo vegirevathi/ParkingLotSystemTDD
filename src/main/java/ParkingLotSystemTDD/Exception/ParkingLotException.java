@@ -2,7 +2,7 @@ package ParkingLotSystemTDD.Exception;
 
 public class ParkingLotException extends Throwable {
     public enum e {
-        PARKING_LOT_FULL, NO_SUCH_VEHICLE_PARKED, ALREADY_PARKED;
+        PARKING_LOT_FULL, NO_SUCH_VEHICLE_PARKED, ALREADY_PARKED, CAR_NUMBER_MISMATCH;
     }
 
     public e type;
