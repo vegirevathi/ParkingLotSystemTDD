@@ -3,6 +3,7 @@ package parkinglotsystemtest;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.observer.AirportSecurity;
 import parkinglotsystem.observer.ParkingLotOwner;
+import parkinglotsystem.service.ParkingLotAllotment;
 import parkinglotsystem.service.ParkingLotSystem;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +17,7 @@ public class ParkingLotSystemTest {
 
     @Before
     public void setUp() {
-        parkingLotSystem = new ParkingLotSystem();
+        parkingLotSystem = new ParkingLotSystem(2);
         this.parkingLotSystem.setParkingLotCapacity(2);
     }
 
@@ -136,7 +137,7 @@ public class ParkingLotSystemTest {
             parkingLotSystem.park("AP 1234");
             parkingLotSystem.findCarNumber("AP 1235");
         } catch (ParkingLotException e) {
-            Assert.assertEquals(ParkingLotException.e.CAR_NUMBER_MISMATCH, e.type);
+            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
     }
 
@@ -149,13 +150,44 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenCarWhenNotParkedInParkingLot_ShouldThrowException() {
+    public void givenCar_WhenNotParkedInParkingLot_ShouldThrowException() {
         try {
             String parkedTime = parkingLotSystem.getVehicleParkedTime("AP 1234");
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
             Assert.assertEquals(LocalDateTime.now().format(format), parkedTime);
         } catch (ParkingLotException e) {
-            Assert.assertEquals(ParkingLotException.e.CAR_NUMBER_MISMATCH, e.type);
+            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
+        }
+    }
+
+    @Test
+    public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation() {
+        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
+        parkingLotAllotment.parkVehicle("AP 1234" );
+        String carLocation = parkingLotAllotment.getCarLocation("AP 1234");
+        String expectedLocation = "Lot Number: 1  Slot Number: 0";
+        Assert.assertEquals(expectedLocation, carLocation);
+    }
+
+    @Test
+    public void givenSameCar_WhenParkedInDifferentLotAndSlot_ShouldThrowException() {
+        try {
+            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
+            parkingLotAllotment.parkVehicle("AP 1234");
+            parkingLotAllotment.parkVehicle("AP 1234");
+        } catch (ParkingLotException e) {
+            Assert.assertEquals(ParkingLotException.e.ALREADY_PARKED, e.type);
+        }
+    }
+
+    @Test
+    public void givenMultipleParkingLots_WhenAllSlotsAreFilled_ShouldThrowException() {
+        try {
+            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(1, 1);
+            parkingLotAllotment.parkVehicle("AP 1234");
+            parkingLotAllotment.parkVehicle("AP 1235");
+        } catch (ParkingLotException e) {
+            Assert.assertEquals(ParkingLotException.e.PARKING_LOT_FULL, e.type);
         }
     }
 }
