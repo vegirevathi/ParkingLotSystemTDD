@@ -155,7 +155,7 @@ public class ParkingLotSystemTest {
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
             Assert.assertEquals(LocalDateTime.now().format(format), parkedTime);
         } catch (ParkingLotException e) {
-            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
+            Assert.assertEquals(ParkingLotException.e.CAR_NUMBER_MISMATCH, e.type);
         }
     }
 }
