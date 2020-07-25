@@ -3,6 +3,7 @@ package parkinglotsystemtest;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.observer.AirportSecurity;
 import parkinglotsystem.observer.ParkingLotOwner;
+import parkinglotsystem.service.DriverType;
 import parkinglotsystem.service.ParkingLotAllotment;
 import parkinglotsystem.service.ParkingLotSystem;
 import org.junit.Assert;
@@ -163,9 +164,15 @@ public class ParkingLotSystemTest {
     @Test
     public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation() {
         ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
-        parkingLotAllotment.parkVehicle("AP 1234" );
-        String carLocation = parkingLotAllotment.getCarLocation("AP 1234");
-        String expectedLocation = "Lot Number: 1  Slot Number: 0";
+        parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1456", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1237", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1238", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1231", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1230", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1233", DriverType.NORMAL );
+        String carLocation = parkingLotAllotment.getCarLocation("AP 1233");
+        String expectedLocation = "Lot Number: 0  Slot Number: 2";
         Assert.assertEquals(expectedLocation, carLocation);
     }
 
@@ -173,8 +180,8 @@ public class ParkingLotSystemTest {
     public void givenSameCar_WhenParkedInDifferentLotAndSlot_ShouldThrowException() {
         try {
             ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
-            parkingLotAllotment.parkVehicle("AP 1234");
-            parkingLotAllotment.parkVehicle("AP 1234");
+            parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL );
+            parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL );
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.ALREADY_PARKED, e.type);
         }
@@ -184,10 +191,25 @@ public class ParkingLotSystemTest {
     public void givenMultipleParkingLots_WhenAllSlotsAreFilled_ShouldThrowException() {
         try {
             ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(1, 1);
-            parkingLotAllotment.parkVehicle("AP 1234");
-            parkingLotAllotment.parkVehicle("AP 1235");
+            parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL );
+            parkingLotAllotment.parkVehicle("AP 1235", DriverType.NORMAL );
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.PARKING_LOT_FULL, e.type);
         }
+    }
+
+    @Test
+    public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForHandicappedDriver() {
+        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
+        parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1456", DriverType.HANDICAPPED );
+        parkingLotAllotment.parkVehicle("AP 1237", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1238", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1231", DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle("AP 1230", DriverType.HANDICAPPED );
+        parkingLotAllotment.parkVehicle("AP 1233", DriverType.NORMAL );
+        String carLocation = parkingLotAllotment.getCarLocation("AP 1233");
+        String expectedLocation = "Lot Number: 2  Slot Number: 1";
+        Assert.assertEquals(expectedLocation, carLocation);
     }
 }
