@@ -8,7 +8,6 @@ public class ParkingSlotDetails {
     private final String carNumber;
     private final int slotNumber;
     private final String time;
-    private int lotNumber;
 
     public ParkingSlotDetails(int slotNumber, String carNumber) {
         this.carNumber = carNumber;

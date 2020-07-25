@@ -1,18 +1,22 @@
 package parkinglotsystem.service;
 
+import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
+import parkinglotsystem.model.Car;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static parkinglotsystem.enums.CarDetails.*;
+
 public class ParkingLotAllotment {
 
     private final int numberOfLots;
     private final int numberOfSlots;
     public ArrayList<ParkingLotSystem> parkingLotList;
-    private ParkingLotSystem allotedLotNumber;
+    private ParkingLotSystem allottedLotNumber;
 
     public ParkingLotAllotment(int numberOfLots, int numberOfSlots) {
         this.numberOfLots = numberOfLots;
@@ -21,37 +25,45 @@ public class ParkingLotAllotment {
         IntStream.range(0, numberOfLots).forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots)));
     }
 
-    public void parkVehicle(String carNumber, DriverType driverType) {
+    public void parkVehicle(Car car, DriverType driverType) {
         int bound = numberOfLots;
-        IntStream.range(0, bound).filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(carNumber)).forEach(parkingLot -> {
+        IntStream.range(0, bound).filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(car.getCarNumber())).forEach(parkingLot -> {
             throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
         });
-        ParkingLotSystem parkingLotSystem = getParkingLotNumber(driverType);
-        parkingLotSystem.park(carNumber);
+        ParkingLotSystem parkingLotSystem = getParkingLotNumber(car, driverType);
+        parkingLotSystem.park(car.getCarNumber());
     }
 
-    private ParkingLotSystem getParkingLotNumber(DriverType driverType) {
+    private ParkingLotSystem getParkingLotNumber(Car car, DriverType driverType) {
         int totalNumOfCars;
-        int bound = numberOfLots;
-        totalNumOfCars = IntStream.range(0, bound).map(i -> this.parkingLotList.get(i).getVehicleCount()).sum();
+        totalNumOfCars = IntStream.range(0, numberOfLots).map(i -> this.parkingLotList.get(i).getVehicleCount()).sum();
         if (totalNumOfCars == (numberOfLots * numberOfSlots))
             throw new ParkingLotException("All lots are full", ParkingLotException.e.PARKING_LOT_FULL);
         List<ParkingLotSystem> lot = new ArrayList<>(this.parkingLotList);
         switch (driverType) {
             case NORMAL:
+                int specificLotForLargeVehicles = 1;
+                if (car.getCarSize() == LARGE) {
+                    allottedLotNumber = lot.get(specificLotForLargeVehicles);
+                }
                 lot.sort(Comparator.comparing(ParkingLotSystem::getVehicleCount));
-                allotedLotNumber =  lot.get(0);
+                allottedLotNumber =  lot.get(0);
                 break;
             case HANDICAPPED:
-                allotedLotNumber =  lot.get(0);
+                int specificLotForHandicapped = 0;
+                int nearestParkingLot = 0;
+                if (car.getCarSize() == LARGE) {
+                    allottedLotNumber = lot.get(specificLotForHandicapped);
+                }
+                allottedLotNumber =  lot.get(nearestParkingLot);
                 break;
         }
-        return allotedLotNumber;
+        return allottedLotNumber;
     }
 
-    public String getCarLocation(String carNumber) {
-        ParkingLotSystem parkingLotSystem = this.parkingLotList.stream().filter(lot -> lot.isVehicleParked(carNumber)).findFirst().get();
+    public String getCarLocation(Car car) {
+        ParkingLotSystem parkingLotSystem = this.parkingLotList.stream().filter(lot -> lot.isVehicleParked(car.getCarNumber())).findFirst().get();
         return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem),
-                parkingLotSystem.findCarNumber(carNumber));
+                parkingLotSystem.findCarNumber(car.getCarNumber()));
     }
 }
