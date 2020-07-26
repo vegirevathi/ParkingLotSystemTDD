@@ -3,6 +3,7 @@ package parkinglotsystem.service;
 import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
+import parkinglotsystem.utility.ParkingSlotDetails;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,7 +23,8 @@ public class ParkingLotAllotment {
         this.numberOfLots = numberOfLots;
         this.numberOfSlots = numberOfSlots;
         this.parkingLotList = new ArrayList<>();
-        IntStream.range(0, numberOfLots).forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots)));
+        IntStream.range(0, numberOfLots)
+                .forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots)));
     }
 
     public void parkVehicle(Car car, DriverType driverType) {
@@ -65,5 +67,13 @@ public class ParkingLotAllotment {
         ParkingLotSystem parkingLotSystem = this.parkingLotList.stream().filter(lot -> lot.isVehicleParked(car.getCarNumber())).findFirst().get();
         return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem),
                 parkingLotSystem.findCarNumber(car.getCarNumber()));
+    }
+
+    public List<String> findVehicleWithColourAndCompany(String colour, String company) {
+        List<String> list = new ArrayList<>();
+        this.parkingLotList.forEach(lot -> {
+            List<ParkingSlotDetails> carsParkingDetails = new ArrayList<>(lot.findVehicleWithColourAndCompany(colour, company));
+            carsParkingDetails.stream().map(details -> (details.getCar().getCarNumber())).forEach(list::add); });
+        return list;
     }
 }

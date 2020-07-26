@@ -1,6 +1,7 @@
 package parkinglotsystem.service;
 
 import parkinglotsystem.exception.ParkingLotException;
+import parkinglotsystem.model.Car;
 import parkinglotsystem.observer.ParkingLotObserver;
 import parkinglotsystem.utility.ParkingSlotDetails;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ParkingLotSystem {
@@ -15,12 +17,15 @@ public class ParkingLotSystem {
     private final int numOfSlots;
     private int parkingLotCapacity;
     private final Map<Integer, ParkingSlotDetails> parkingMap;
+    private final List<ParkingSlotDetails> parkingList;
     private int vehicleCount;
+    private String attendantName;
 
     public ParkingLotSystem(int numberOfSlots) {
         this.observers = new ArrayList<>();
         this.parkingMap = new HashMap<>();
         this.numOfSlots = numberOfSlots;
+        this.parkingList = new ArrayList<>();
     }
 
     public void registerParkingLotObserver(ParkingLotObserver observer) {
@@ -38,7 +43,7 @@ public class ParkingLotSystem {
     public void park(String carNumber) {
         if (parkingMap.values()
                 .stream()
-                .anyMatch(slot -> slot.getCarNumber().equals(carNumber)))
+                .anyMatch(slot -> slot.getCar().getCarNumber().equals(carNumber)))
             throw new ParkingLotException("Vehicle is already parked", ParkingLotException.e.ALREADY_PARKED);
         if (vehicleCount == numOfSlots)
             throw new ParkingLotException("Parking Lot is full", ParkingLotException.e.PARKING_LOT_FULL);
@@ -46,20 +51,20 @@ public class ParkingLotSystem {
             observer.capacityIsFull();
         }
         int slotNumber = this.getSlotToPark(this.parkingMap);
-        this.parkingMap.put(slotNumber, new ParkingSlotDetails(slotNumber, carNumber));
+        this.parkingMap.put(slotNumber, new ParkingSlotDetails(slotNumber, carNumber, attendantName));
         this.vehicleCount++;
     }
 
-    public boolean isVehicleParked(String carNumber) {
+    public boolean isVehicleParked( String carNumber) {
         return parkingMap.values()
                 .stream()
-                .anyMatch(slot -> slot.getCarNumber()==(carNumber));
+                .anyMatch(slot -> slot.getCar().getCarNumber()==(carNumber));
     }
 
     public void unPark(int slotNumber, String carNumber) {
         if (parkingMap.values()
                       .stream()
-                      .noneMatch(slot -> slot.getCarNumber().equals(carNumber)))
+                      .noneMatch(slot -> slot.getCar().getCarNumber().equals(carNumber)))
             throw new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         this.parkingMap.remove(slotNumber, new ParkingSlotDetails(slotNumber, carNumber));
         this.vehicleCount--;
@@ -68,7 +73,7 @@ public class ParkingLotSystem {
     public boolean isVehicleUnParked(String carNumber) {
         return parkingMap.values()
                 .stream()
-                .noneMatch(slot -> slot.getCarNumber().equals(carNumber));
+                .noneMatch(slot -> slot.getCar().getCarNumber().equals(carNumber));
     }
 
     public Integer getSlotToPark(Map<Integer, ParkingSlotDetails> parkingMap) {
@@ -82,7 +87,7 @@ public class ParkingLotSystem {
     private ParkingSlotDetails getSlotDetails(String carNumber) {
         return this.parkingMap.values()
                 .stream()
-                .filter(slot -> carNumber.equals(slot.getCarNumber()))
+                .filter(slot -> carNumber.equals(slot.getCar().getCarNumber()))
                 .findFirst()
                 .orElseThrow(() -> new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED));
     }
@@ -93,5 +98,13 @@ public class ParkingLotSystem {
 
     public String getVehicleParkedTime(String carNumber) {
         return this.getSlotDetails(carNumber).getParkedTime();
+    }
+
+    public List<ParkingSlotDetails> findVehicleWithColourAndCompany(String colour, String company) {
+     return this.parkingMap.values().stream().filter(parkingSlotDetails -> parkingSlotDetails.getCar().getColour().equals(colour))
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCar() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCar().getCompany().equals(company))
+               // .map(parkingSlotDetails -> parkingSlotDetails.getAttendantName() + "-" + parkingSlotDetails.getSlotNumber())
+                .collect(Collectors.toList());
     }
 }

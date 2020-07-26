@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 
 import static parkinglotsystem.enums.CarDetails.LARGE;
 import static parkinglotsystem.enums.CarDetails.SMALL;
@@ -251,5 +253,20 @@ public class ParkingLotSystemTest {
         String expectedLocation2 = "Lot Number: 0  Slot Number: 3";
         Assert.assertEquals(expectedLocation1, carLocation1);
         Assert.assertEquals(expectedLocation2, carLocation2);
+    }
+
+    @Test
+    public void givenParkingLotSystem_WhenBlueToyotaCarsAreParked_ShouldReturnItsLocation() {
+        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
+        parkingLotAllotment.parkVehicle(new Car("AP 1235", SMALL, "White", "Toyota"), DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle(new Car("AP 1789", SMALL, "Blue", "Toyota"), DriverType.HANDICAPPED);
+        parkingLotAllotment.parkVehicle(new Car("AP 1237", LARGE, "Black", "BMW"), DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle(new Car("AP 1247", SMALL, "Blue", "Volkswagen"), DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle(new Car("AP 1268", SMALL, "Red", "Maruthi"), DriverType.NORMAL );
+        parkingLotAllotment.parkVehicle(new Car("AP 1234", LARGE, "Blue", "Toyota"), DriverType.HANDICAPPED );
+        parkingLotAllotment.parkVehicle(new Car("AP 1001", SMALL, "Yellow", "BMW"), DriverType.HANDICAPPED );
+        List<String> blueToyota = parkingLotAllotment.findVehicleWithColourAndCompany("Blue", "Toyota");
+        List<String> expectedListOfLocation = Arrays.asList("AP 1789");
+        Assert.assertEquals(expectedListOfLocation, blueToyota);
     }
 }

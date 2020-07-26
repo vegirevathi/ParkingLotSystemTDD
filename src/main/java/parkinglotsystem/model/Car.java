@@ -7,10 +7,19 @@ import java.util.Objects;
 public class Car {
     private final String carNumber;
     private final CarDetails carSize;
+    private String colour;
+    private String company;
 
     public Car(String carNumber, CarDetails carDetails) {
         this.carNumber = carNumber;
         this.carSize = carDetails;
+    }
+
+    public Car(String carNumber, CarDetails carSize, String colour, String company) {
+        this.carNumber = carNumber;
+        this.carSize = carSize;
+        this.colour = colour;
+        this.company = company;
     }
 
     public String getCarNumber() {
@@ -28,5 +37,13 @@ public class Car {
         Car car = (Car) o;
         return Objects.equals(carNumber, car.carNumber) &&
                 carSize == car.carSize;
+    }
+
+    public String getColour() {
+        return colour;
+    }
+
+    public String getCompany() {
+        return company;
     }
 }
