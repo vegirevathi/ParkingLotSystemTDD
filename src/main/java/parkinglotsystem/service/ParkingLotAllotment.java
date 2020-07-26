@@ -3,6 +3,7 @@ package parkinglotsystem.service;
 import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
+import parkinglotsystem.utility.ParkingSlotDetails;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +28,10 @@ public class ParkingLotAllotment {
 
     public void parkVehicle(Car car, DriverType driverType) {
         int bound = numberOfLots;
-        IntStream.range(0, bound).filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(car.getCarNumber())).forEach(parkingLot -> {
+        IntStream.range(0, bound)
+                .filter(parkingLot -> parkingLotList.get(parkingLot)
+                .isVehicleParked(car.getCarNumber()))
+                .forEach(parkingLot -> {
             throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
         });
         ParkingLotSystem parkingLotSystem = getParkingLotNumber(car, driverType);
@@ -62,8 +66,23 @@ public class ParkingLotAllotment {
     }
 
     public String getCarLocation(Car car) {
-        ParkingLotSystem parkingLotSystem = this.parkingLotList.stream().filter(lot -> lot.isVehicleParked(car.getCarNumber())).findFirst().get();
+        ParkingLotSystem parkingLotSystem = this.parkingLotList.stream()
+                .filter(lot -> lot.isVehicleParked(car.getCarNumber())).findFirst().get();
         return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem),
                 parkingLotSystem.findCarNumber(car.getCarNumber()));
+    }
+
+    public List<String> getCarLocationBasedOnColour(String colour)
+    {
+        List<String> list = new ArrayList<>();
+            this.parkingLotList.stream().map(lot -> lot.getCarDetailsBasedOnColour(colour))
+            .forEachOrdered(carLocationBasedOnColour -> {
+                for (ParkingSlotDetails parkingSlotDetails : carLocationBasedOnColour) {
+                    String s = String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingSlotDetails),
+                            parkingSlotDetails.getSlotNumber());
+                    list.add(s);
+                }
+            });
+        return list;
     }
 }

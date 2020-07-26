@@ -1,6 +1,7 @@
 package parkinglotsystem.service;
 
 import parkinglotsystem.exception.ParkingLotException;
+import parkinglotsystem.model.Car;
 import parkinglotsystem.observer.ParkingLotObserver;
 import parkinglotsystem.utility.ParkingSlotDetails;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ParkingLotSystem {
@@ -84,7 +86,8 @@ public class ParkingLotSystem {
                 .stream()
                 .filter(slot -> carNumber.equals(slot.getCarNumber()))
                 .findFirst()
-                .orElseThrow(() -> new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED));
+                .orElseThrow(() ->
+                        new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED));
     }
 
     public int findCarNumber(String carNumber) throws ParkingLotException {
@@ -93,5 +96,13 @@ public class ParkingLotSystem {
 
     public String getVehicleParkedTime(String carNumber) {
         return this.getSlotDetails(carNumber).getParkedTime();
+    }
+
+    public List<ParkingSlotDetails> getCarDetailsBasedOnColour(String colour) {
+        List<ParkingSlotDetails> list = this.parkingMap.values()
+                .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarColour().equals(colour))
+                .collect(Collectors.toList());
+        return list;
     }
 }
