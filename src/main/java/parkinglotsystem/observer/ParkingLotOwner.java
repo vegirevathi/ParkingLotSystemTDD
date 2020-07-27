@@ -1,6 +1,7 @@
 package parkinglotsystem.observer;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class ParkingLotOwner implements ParkingLotObserver {
     private boolean isFullCapacity;
@@ -15,9 +16,9 @@ public class ParkingLotOwner implements ParkingLotObserver {
     }
 
     public static Integer getSlotToPark(Map<Integer, String> parkingMap) {
-        for (Integer slotNumber = 1; slotNumber <= parkingMap.size(); slotNumber++)
-            if (parkingMap.get(slotNumber) == null)
-                return slotNumber;
-        return 0;
+        return Stream.iterate(1, slotNumber -> slotNumber <= parkingMap.size(), slotNumber -> (slotNumber + 1))
+                .filter(slotNumber -> parkingMap.get(slotNumber) == null)
+                .findFirst()
+                .orElse(0);
     }
 }
