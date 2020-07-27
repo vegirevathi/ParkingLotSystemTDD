@@ -199,7 +199,7 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForHandicappedDriver() {
+    public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForNormalDriver() {
         ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
         parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL);
         parkingLotAllotment.parkVehicle("AP 1456", DriverType.HANDICAPPED);
@@ -210,6 +210,21 @@ public class ParkingLotSystemTest {
         parkingLotAllotment.parkVehicle("AP 1233", DriverType.NORMAL);
         String carLocation = parkingLotAllotment.getCarLocation("AP 1233");
         String expectedLocation = "Lot Number: 2  Slot Number: 1";
+        Assert.assertEquals(expectedLocation, carLocation);
+    }
+
+    @Test
+    public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForHandicappedDriver() {
+        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
+        parkingLotAllotment.parkVehicle("AP 1234", DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle("AP 1456", DriverType.HANDICAPPED);
+        parkingLotAllotment.parkVehicle("AP 1237", DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle("AP 1238", DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle("AP 1231", DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle("AP 1230", DriverType.HANDICAPPED);
+        parkingLotAllotment.parkVehicle("AP 1233", DriverType.NORMAL);
+        String carLocation = parkingLotAllotment.getCarLocation("AP 1230");
+        String expectedLocation = "Lot Number: 0  Slot Number: 2";
         Assert.assertEquals(expectedLocation, carLocation);
     }
 }
