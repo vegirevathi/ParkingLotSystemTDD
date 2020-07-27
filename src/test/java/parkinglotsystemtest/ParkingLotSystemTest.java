@@ -82,7 +82,7 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenWhenParkingLotIsFull_ShouldInformTheParkingLotOwner() {
+    public void givenParkingLot_WhenItIsFull_ShouldInformTheParkingLotOwner() {
         ParkingLotOwner parkingLotOwner = new ParkingLotOwner();
         parkingLotSystem.registerParkingLotObserver(parkingLotOwner);
         try {
@@ -96,7 +96,7 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenWhenParkingLotIsFull_ShouldInformTheAirportSecurity() {
+    public void givenParkingLot_WhenItIsFull_ShouldInformTheAirportSecurity() {
         AirportSecurity airportSecurity = new AirportSecurity();
         parkingLotSystem.registerParkingLotObserver(airportSecurity);
         try {
@@ -110,7 +110,7 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenWhenParkingLotSpaceIsAvailableAfterFull_ShouldReturnTrue() {
+    public void givenParkingLot_WhenSpaceIsAvailableAfterFull_ShouldReturnTrue() {
         ParkingLotOwner parkingLotOwner = new ParkingLotOwner();
         parkingLotSystem.registerParkingLotObserver(parkingLotOwner);
         try {
@@ -124,7 +124,7 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenVehicleWhenFindingWithCarNumber_ShouldReturnTrue() {
+    public void givenCarNumber_WhenFoundInParkingSlot_ShouldReturnTrue() {
         parkingLotSystem.park("AP 1234");
         parkingLotSystem.park("AP 1235");
         int slotNumber = parkingLotSystem.findCarNumber("AP 1235");
@@ -142,7 +142,7 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    public void givenCarWhenParkedInParkingLot_ShouldReturnParkingTime() {
+    public void givenCar_WhenParkedInParkingLot_ShouldReturnParkingTime() {
         parkingLotSystem.park("AP 1234");
         String parkedTime = parkingLotSystem.getVehicleParkedTime("AP 1234");
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
@@ -163,7 +163,7 @@ public class ParkingLotSystemTest {
     @Test
     public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation() {
         ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5);
-        parkingLotAllotment.parkVehicle("AP 1234" );
+        parkingLotAllotment.parkVehicle("AP 1234");
         String carLocation = parkingLotAllotment.getCarLocation("AP 1234");
         String expectedLocation = "Lot Number: 1  Slot Number: 0";
         Assert.assertEquals(expectedLocation, carLocation);

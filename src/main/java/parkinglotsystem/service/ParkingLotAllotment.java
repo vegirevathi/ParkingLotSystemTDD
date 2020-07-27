@@ -17,11 +17,13 @@ public class ParkingLotAllotment {
         this.numberOfLots = numberOfLots;
         this.numberOfSlots = numberOfSlots;
         this.parkingLotList = new ArrayList<>();
-        IntStream.range(0, numberOfLots).forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots)));
+        IntStream.range(0, numberOfLots)
+                .forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots)));
     }
 
     public void parkVehicle(String carNumber) {
-        IntStream.range(0, numberOfLots).filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(carNumber))
+        IntStream.range(0, numberOfLots)
+                .filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(carNumber))
                 .forEach(i -> {
                     throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
                 });
@@ -40,7 +42,9 @@ public class ParkingLotAllotment {
     }
 
     public String getCarLocation(String carNumber) {
-        ParkingLotSystem parkingLotSystem = this.parkingLotList.stream().filter(lot -> lot.isVehicleParked(carNumber)).findFirst().get();
+        ParkingLotSystem parkingLotSystem = this.parkingLotList.stream()
+                                                .filter(lot -> lot.isVehicleParked(carNumber))
+                                                .findFirst().get();
         return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem) + 1,
                 parkingLotSystem.findCarNumber(carNumber));
     }
