@@ -26,8 +26,7 @@ public class ParkingLotAllotment {
     }
 
     public void parkVehicle(Car car, DriverType driverType) {
-        int bound = numberOfLots;
-        IntStream.range(0, bound).filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(car.getCarNumber())).forEach(parkingLot -> {
+        IntStream.range(0, numberOfLots).filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(car.getCarNumber())).forEach(parkingLot -> {
             throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
         });
         ParkingLotSystem parkingLotSystem = getParkingLotNumber(car, driverType);
