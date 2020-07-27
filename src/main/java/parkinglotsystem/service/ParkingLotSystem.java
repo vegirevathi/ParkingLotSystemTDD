@@ -53,13 +53,13 @@ public class ParkingLotSystem {
     public boolean isVehicleParked(String carNumber) {
         return parkingMap.values()
                 .stream()
-                .anyMatch(slot -> slot.getCarNumber()==(carNumber));
+                .anyMatch(slot -> slot.getCarNumber() == (carNumber));
     }
 
     public void unPark(int slotNumber, String carNumber) {
         if (parkingMap.values()
-                      .stream()
-                      .noneMatch(slot -> slot.getCarNumber().equals(carNumber)))
+                .stream()
+                .noneMatch(slot -> slot.getCarNumber().equals(carNumber)))
             throw new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         this.parkingMap.remove(slotNumber, new ParkingSlotDetails(slotNumber, carNumber));
         this.vehicleCount--;
@@ -88,7 +88,7 @@ public class ParkingLotSystem {
     }
 
     public int findCarNumber(String carNumber) throws ParkingLotException {
-       return this.getSlotDetails(carNumber).getSlotNumber();
+        return this.getSlotDetails(carNumber).getSlotNumber();
     }
 
     public String getVehicleParkedTime(String carNumber) {
