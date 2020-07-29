@@ -386,4 +386,42 @@ public class ParkingLotSystemTest {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
     }
+
+    @Test
+    public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles_WhenSearchedForCompany() {
+        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
+        secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
+        thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
+        fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "BMW");
+        fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
+        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingLotAllotment.getCarLocationBasedOnCompany("BMW");
+        List<String> expectedLocation = Arrays.asList(parkingLotAllotment.getCarLocation(fourthVehicle));
+        Assert.assertEquals(expectedLocation, carLocation);
+    }
+
+    @Test
+    public void givenCars_WhenParkedInSlotsAndLots_ShouldThrowException_WhenSearchedCompanyNotFound() {
+        try {
+            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
+            secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
+            thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
+            fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "TOYOTA");
+            fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
+            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            parkingLotAllotment.getCarLocationBasedOnCompany("BMW");
+        } catch (ParkingLotException e) {
+            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
+        }
+    }
 }
