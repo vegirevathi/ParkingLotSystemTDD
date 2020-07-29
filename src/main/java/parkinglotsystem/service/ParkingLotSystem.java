@@ -1,6 +1,7 @@
 package parkinglotsystem.service;
 
 import parkinglotsystem.enums.CarDetails;
+import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
 import parkinglotsystem.observer.ParkingLotObserver;
@@ -136,6 +137,16 @@ public class ParkingLotSystem {
                 .filter(parkingSlot -> parkingSlot.getParkedTime() != null)
                 .filter(parkingSlot -> Duration.between(parkingSlot.getParkedTime(),
                         LocalDateTime.now()).toMinutes() <= minutes)
+                .collect(Collectors.toList());
+        return list;
+    }
+
+    public List<ParkingSlotDetails> getCarDetailsBasedOnLotNumber(int lotNumber) {
+        List<ParkingSlotDetails> list = this.parkingMap.values()
+                .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarSize().equals(CarDetails.SMALL))
+                .filter(parkingSlot -> parkingSlot.getCarDetails().getDriverType().equals(DriverType.HANDICAPPED))
                 .collect(Collectors.toList());
         return list;
     }

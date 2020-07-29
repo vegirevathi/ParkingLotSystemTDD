@@ -1,5 +1,6 @@
 package parkinglotsystem.utility;
 
+import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.model.Car;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public class ParkingSlotDetails {
     private int slotNumber;
     private LocalDateTime time;
     private Car car;
+    private DriverType driverType;
 
     public ParkingSlotDetails(int lotNumber, int slotNumber, String attendantName, Car car) {
         this.lotNumber = lotNumber;

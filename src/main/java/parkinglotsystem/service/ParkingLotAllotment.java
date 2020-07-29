@@ -124,4 +124,18 @@ public class ParkingLotAllotment {
             throw new ParkingLotException("No vehicle is parked before 30 minutes", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
     }
+
+    public List<String> getCarLocationOfCarForGivenParkingLot(int lotNumber) {
+        List<String> list = new ArrayList<>();
+        this.parkingLotList.stream().map(parkingLotSystem -> parkingLotSystem.getCarDetailsBasedOnLotNumber(lotNumber))
+                .forEachOrdered(parkingDetails -> parkingDetails.stream()
+                    .map(details -> "(Lot Number: " + (details.getLotNumber() + 1) +
+                        ", Slot Number: " + details.getSlotNumber() +
+                        ", Car Number: " + details.getCarDetails().getCarNumber() +
+                        ", Car Company: " + details.getCarDetails().getCarCompany() +
+                        ", Car Colour: " + details.getCarDetails().getCarColour() + " )").forEach(list::add));
+        if (list.isEmpty())
+            throw new ParkingLotException("No vehicle is parked in given lot numbers", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
+        return list;
+    }
 }

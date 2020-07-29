@@ -1,6 +1,7 @@
 package parkinglotsystem.model;
 
 import parkinglotsystem.enums.CarDetails;
+import parkinglotsystem.enums.DriverType;
 
 import java.util.Objects;
 
@@ -8,6 +9,7 @@ public class Car {
     private final String carNumber;
     private final CarDetails carSize;
     private final String carColour;
+    private DriverType driverType;
     private String carCompany;
 
     public Car(String carNumber, CarDetails carDetails, String carColour) {
@@ -21,6 +23,14 @@ public class Car {
         this.carSize = carDetails;
         this.carColour = carColour;
         this.carCompany = carCompany;
+    }
+
+    public Car(String carNumber, CarDetails carDetails, String carColour, String carCompany, DriverType driverType) {
+        this.carNumber = carNumber;
+        this.carSize = carDetails;
+        this.carColour = carColour;
+        this.carCompany = carCompany;
+        this.driverType = driverType;
     }
 
     public CarDetails getCarSize() {
@@ -39,6 +49,10 @@ public class Car {
         return carCompany;
     }
 
+    public DriverType getDriverType() {
+        return driverType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,6 +61,7 @@ public class Car {
         return Objects.equals(carNumber, car.carNumber) &&
                 carSize == car.carSize &&
                 Objects.equals(carColour, car.carColour) &&
+                driverType == car.driverType &&
                 Objects.equals(carCompany, car.carCompany);
     }
 }
