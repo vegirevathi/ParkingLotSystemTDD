@@ -3,7 +3,6 @@ package parkinglotsystem.service;
 import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
-import parkinglotsystem.utility.ParkingSlotDetails;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,23 +18,24 @@ public class ParkingLotAllotment {
     public ArrayList<ParkingLotSystem> parkingLotList;
     private ParkingLotSystem allottedLotNumber;
 
-    public ParkingLotAllotment(int numberOfLots, int numberOfSlots) {
+    public ParkingLotAllotment(int numberOfLots, int numberOfSlots, String... attendantName) {
         this.numberOfLots = numberOfLots;
         this.numberOfSlots = numberOfSlots;
         this.parkingLotList = new ArrayList<>();
-        IntStream.range(0, numberOfLots).forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots)));
+        IntStream.range(0, numberOfLots)
+                .forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots, attendantName[lotNumber])));
     }
 
     public void parkVehicle(Car car, DriverType driverType) {
         int bound = numberOfLots;
         IntStream.range(0, bound)
                 .filter(parkingLot -> parkingLotList.get(parkingLot)
-                .isVehicleParked(car.getCarNumber()))
+                .isVehicleParked(car))
                 .forEach(parkingLot -> {
             throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
         });
         ParkingLotSystem parkingLotSystem = getParkingLotNumber(car, driverType);
-        parkingLotSystem.park(car.getCarNumber());
+        parkingLotSystem.park(car);
     }
 
     private ParkingLotSystem getParkingLotNumber(Car car, DriverType driverType) {
@@ -67,22 +67,20 @@ public class ParkingLotAllotment {
 
     public String getCarLocation(Car car) {
         ParkingLotSystem parkingLotSystem = this.parkingLotList.stream()
-                .filter(lot -> lot.isVehicleParked(car.getCarNumber())).findFirst().get();
-        return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem),
-                parkingLotSystem.findCarNumber(car.getCarNumber()));
+                .filter(lot -> lot.isVehicleParked(car)).findFirst().get();
+        return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem)+1,
+                parkingLotSystem.findCarNumber(car));
     }
 
     public List<String> getCarLocationBasedOnColour(String colour)
     {
         List<String> list = new ArrayList<>();
             this.parkingLotList.stream().map(lot -> lot.getCarDetailsBasedOnColour(colour))
-            .forEachOrdered(carLocationBasedOnColour -> {
-                for (ParkingSlotDetails parkingSlotDetails : carLocationBasedOnColour) {
-                    String s = String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingSlotDetails),
-                            parkingSlotDetails.getSlotNumber());
-                    list.add(s);
-                }
-            });
+            .forEachOrdered(carLocationBasedOnColour -> carLocationBasedOnColour.stream()
+                    .map(location -> "Lot Number: " + (location.getLotNumber() + 1) +
+                            "  Slot Number: " + location.getSlotNumber()).forEach(list::add));
+        if (list.isEmpty())
+                throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
     }
 }

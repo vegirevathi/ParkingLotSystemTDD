@@ -1,5 +1,6 @@
 package parkinglotsystem.service;
 
+import parkinglotsystem.enums.CarDetails;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
 import parkinglotsystem.observer.ParkingLotObserver;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ParkingLotSystem {
@@ -18,11 +20,16 @@ public class ParkingLotSystem {
     private int parkingLotCapacity;
     private final Map<Integer, ParkingSlotDetails> parkingMap;
     private int vehicleCount;
+    private int lotNumber;
+    private final String attendantName;
+    private Car car;
 
-    public ParkingLotSystem(int numberOfSlots) {
+    public ParkingLotSystem(int numberOfSlots, String attendantName) {
+        this.attendantName = attendantName;
         this.observers = new ArrayList<>();
         this.parkingMap = new HashMap<>();
         this.numOfSlots = numberOfSlots;
+        IntStream.rangeClosed(1, (numberOfSlots)).forEach(slotNumber -> parkingMap.put(slotNumber, new ParkingSlotDetails()));
     }
 
     public void registerParkingLotObserver(ParkingLotObserver observer) {
@@ -37,70 +44,77 @@ public class ParkingLotSystem {
         return vehicleCount;
     }
 
-    public void park(String carNumber) {
+    public void park(Car car) {
         if (parkingMap.values()
                 .stream()
-                .anyMatch(slot -> slot.getCarNumber().equals(carNumber)))
+                .anyMatch(slot -> slot.getCarDetails()==car))
             throw new ParkingLotException("Vehicle is already parked", ParkingLotException.e.ALREADY_PARKED);
         if (vehicleCount == numOfSlots)
             throw new ParkingLotException("Parking Lot is full", ParkingLotException.e.PARKING_LOT_FULL);
         for (ParkingLotObserver observer : observers) {
             observer.capacityIsFull();
         }
-        int slotNumber = this.getSlotToPark(this.parkingMap);
-        this.parkingMap.put(slotNumber, new ParkingSlotDetails(slotNumber, carNumber));
+        int slotNumber = this.getSlotToPark(car.getCarSize());
+        this.parkingMap.put(slotNumber, new ParkingSlotDetails(lotNumber, slotNumber, attendantName, car));
         this.vehicleCount++;
     }
 
-    public boolean isVehicleParked(String carNumber) {
+    public boolean isVehicleParked(Car car) {
         return parkingMap.values()
                 .stream()
-                .anyMatch(slot -> slot.getCarNumber()==(carNumber));
+                .anyMatch(slot -> slot.getCarDetails()==(car));
     }
 
-    public void unPark(int slotNumber, String carNumber) {
+    public void unPark(Car car) {
+        int slotNumber = this.findCarNumber(car);
         if (parkingMap.values()
                       .stream()
-                      .noneMatch(slot -> slot.getCarNumber().equals(carNumber)))
+                      .noneMatch(slot -> slot.getCarDetails()==(car)))
             throw new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
-        this.parkingMap.remove(slotNumber, new ParkingSlotDetails(slotNumber, carNumber));
+        this.parkingMap.remove(slotNumber, new ParkingSlotDetails(lotNumber, slotNumber, attendantName, car));
         this.vehicleCount--;
     }
 
-    public boolean isVehicleUnParked(String carNumber) {
+    public boolean isVehicleUnParked(Car car) {
         return parkingMap.values()
                 .stream()
-                .noneMatch(slot -> slot.getCarNumber().equals(carNumber));
+                .noneMatch(slot -> slot.getCarDetails()==car);
     }
 
-    public Integer getSlotToPark(Map<Integer, ParkingSlotDetails> parkingMap) {
-        return Stream.iterate(1, slotNumber -> slotNumber <= this.parkingMap.size(),
-                slotNumber -> (slotNumber + 1))
-                .filter(slotNumber -> this.parkingMap.get(slotNumber) == null)
-                .findFirst()
-                .orElse(0);
+    public int getSlotToPark(CarDetails carDetails) {
+        if (CarDetails.LARGE.equals(carDetails))
+            return this.parkingMap.keySet()
+                        .stream()
+                        .filter(slot -> parkingMap.get(slot).getCarDetails() == null)
+                        .filter(slot -> (slot + 1) <= numOfSlots && parkingMap.get(slot+1).getCarDetails() == null)
+                        .findFirst().orElse(0);
+        return parkingMap.keySet()
+                .stream()
+                .filter(slot -> parkingMap.get(slot).getCarDetails() == null)
+                .findFirst().get();
     }
 
-    private ParkingSlotDetails getSlotDetails(String carNumber) {
+    private ParkingSlotDetails getSlotDetails(Car car) {
         return this.parkingMap.values()
                 .stream()
-                .filter(slot -> carNumber.equals(slot.getCarNumber()))
+                .filter(slot -> car.equals(slot.getCarDetails()))
                 .findFirst()
                 .orElseThrow(() ->
                         new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED));
     }
 
-    public int findCarNumber(String carNumber) throws ParkingLotException {
-       return this.getSlotDetails(carNumber).getSlotNumber();
+    public int findCarNumber(Car car) {
+       return this.getSlotDetails(car).getSlotNumber();
     }
 
-    public String getVehicleParkedTime(String carNumber) {
-        return this.getSlotDetails(carNumber).getParkedTime();
+    public String getVehicleParkedTime(Car car) {
+        return this.getSlotDetails(car).getParkedTime();
     }
 
     public List<ParkingSlotDetails> getCarDetailsBasedOnColour(String colour) {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
                 .filter(parkingSlot -> parkingSlot.getCarDetails().getCarColour().equals(colour))
                 .collect(Collectors.toList());
         return list;

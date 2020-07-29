@@ -7,19 +7,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class ParkingSlotDetails {
-    private String carNumber;
-    private final int slotNumber;
+    private String attendantName;
+    private int lotNumber;
+    private int slotNumber;
     private String time;
     private Car car;
 
-    public ParkingSlotDetails(int slotNumber, String carNumber) {
-        this.car = car;
-        this.carNumber = carNumber;
+    public ParkingSlotDetails(int lotNumber, int slotNumber, String attendantName, Car car) {
+        this.lotNumber = lotNumber;
         this.slotNumber = slotNumber;
+        this.attendantName = attendantName;
+        this.car = car;
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
         this.time = LocalDateTime.now().format(format);
     }
 
+    public ParkingSlotDetails() {
+    }
 
     public String getParkedTime() {
         return this.time;
@@ -29,12 +33,12 @@ public class ParkingSlotDetails {
         return this.slotNumber;
     }
 
-    public String getCarNumber() {
-        return this.carNumber;
-    }
-
     public Car getCarDetails() {
         return this.car;
+    }
+
+    public int getLotNumber() {
+        return lotNumber;
     }
 
     @Override
@@ -42,8 +46,9 @@ public class ParkingSlotDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ParkingSlotDetails that = (ParkingSlotDetails) o;
-        return slotNumber == that.slotNumber &&
-                Objects.equals(carNumber, that.carNumber) &&
+        return lotNumber == that.lotNumber &&
+                slotNumber == that.slotNumber &&
+                Objects.equals(attendantName, that.attendantName) &&
                 Objects.equals(time, that.time) &&
                 Objects.equals(car, that.car);
     }
