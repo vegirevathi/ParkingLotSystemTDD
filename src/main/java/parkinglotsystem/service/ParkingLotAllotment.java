@@ -3,6 +3,7 @@ package parkinglotsystem.service;
 import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
+import parkinglotsystem.utility.ParkingSlotDetails;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -72,8 +73,7 @@ public class ParkingLotAllotment {
                 parkingLotSystem.findCarNumber(car));
     }
 
-    public List<String> getCarLocationBasedOnColour(String colour)
-    {
+    public List<String> getCarLocationBasedOnColour(String colour) {
         List<String> list = new ArrayList<>();
             this.parkingLotList.stream().map(lot -> lot.getCarDetailsBasedOnColour(colour))
             .forEachOrdered(carLocationBasedOnColour -> carLocationBasedOnColour.stream()
@@ -81,6 +81,20 @@ public class ParkingLotAllotment {
                             "  Slot Number: " + location.getSlotNumber()).forEach(list::add));
         if (list.isEmpty())
                 throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
+        return list;
+    }
+
+    public List<String> getCarLocationBasedOnColourAndCompany(String colour, String company) {
+        List<String> list = new ArrayList<>();
+        parkingLotList.forEach(lot -> {
+            List<ParkingSlotDetails> carsParkingDetails = new ArrayList<>(lot.getCarDetailsBasedOnColour(colour));
+            carsParkingDetails.retainAll(lot.getCarDetailsBasedOnCompany(company));
+            carsParkingDetails.stream().map(details -> "( Parking Lot: " + (details.getLotNumber() + 1)
+                    + ", Parking Slot: " + details.getSlotNumber() + ", Plate Number: " + details.getCarDetails().getCarNumber()
+                    + ", Attendant Name: " + details.getAttendantName() + " )")
+                    .forEach(list::add); });
+        if (list.isEmpty())
+            throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
     }
 }

@@ -117,4 +117,13 @@ public class ParkingLotSystem {
                 .collect(Collectors.toList());
         return list;
     }
+
+    public List<ParkingSlotDetails> getCarDetailsBasedOnCompany(String company) {
+        List<ParkingSlotDetails> list = this.parkingMap.values()
+                .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarCompany().equals(company))
+                .collect(Collectors.toList());
+        return list;
+    }
 }

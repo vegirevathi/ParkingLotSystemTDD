@@ -29,6 +29,10 @@ public class ParkingSlotDetails {
         return this.time;
     }
 
+    public String getAttendantName() {
+        return this.attendantName;
+    }
+
     public int getSlotNumber() {
         return this.slotNumber;
     }
