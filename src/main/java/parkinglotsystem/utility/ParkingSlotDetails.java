@@ -10,7 +10,7 @@ public class ParkingSlotDetails {
     private String attendantName;
     private int lotNumber;
     private int slotNumber;
-    private String time;
+    private LocalDateTime time;
     private Car car;
 
     public ParkingSlotDetails(int lotNumber, int slotNumber, String attendantName, Car car) {
@@ -18,15 +18,13 @@ public class ParkingSlotDetails {
         this.slotNumber = slotNumber;
         this.attendantName = attendantName;
         this.car = car;
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
-        this.time = LocalDateTime.now().format(format);
     }
 
     public ParkingSlotDetails() {
     }
 
-    public String getParkedTime() {
-        return this.time;
+    public LocalDateTime getParkedTime() {
+        return time;
     }
 
     public String getAttendantName() {

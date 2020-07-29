@@ -6,6 +6,8 @@ import parkinglotsystem.model.Car;
 import parkinglotsystem.observer.ParkingLotObserver;
 import parkinglotsystem.utility.ParkingSlotDetails;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +107,7 @@ public class ParkingLotSystem {
         return this.getSlotDetails(car).getSlotNumber();
     }
 
-    public String getVehicleParkedTime(Car car) {
+    public LocalDateTime getVehicleParkedTime(Car car) {
         return this.getSlotDetails(car).getParkedTime();
     }
 
@@ -123,6 +125,17 @@ public class ParkingLotSystem {
                 .stream()
                 .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
                 .filter(parkingSlot -> parkingSlot.getCarDetails().getCarCompany().equals(company))
+                .collect(Collectors.toList());
+        return list;
+    }
+
+    public List<ParkingSlotDetails> getCarDetailsBasedOnTime(int minutes) {
+        List<ParkingSlotDetails> list = this.parkingMap.values()
+                .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .filter(parkingSlot -> parkingSlot.getParkedTime() != null)
+                .filter(parkingSlot -> Duration.between(parkingSlot.getParkedTime(),
+                        LocalDateTime.now()).toMinutes() <= minutes)
                 .collect(Collectors.toList());
         return list;
     }

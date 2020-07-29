@@ -5,9 +5,12 @@ import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
 import parkinglotsystem.utility.ParkingSlotDetails;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static parkinglotsystem.enums.CarDetails.*;
@@ -89,8 +92,8 @@ public class ParkingLotAllotment {
         parkingLotList.forEach(lot -> {
             List<ParkingSlotDetails> carsParkingDetails = new ArrayList<>(lot.getCarDetailsBasedOnColour(colour));
             carsParkingDetails.retainAll(lot.getCarDetailsBasedOnCompany(company));
-            carsParkingDetails.stream().map(details -> "( Parking Lot: " + (details.getLotNumber() + 1)
-                    + ", Parking Slot: " + details.getSlotNumber() + ", Plate Number: " + details.getCarDetails().getCarNumber()
+            carsParkingDetails.stream().map(details -> "( Lot Number: " + (details.getLotNumber() + 1)
+                    + ", Slot Number: " + details.getSlotNumber() + ", Car Number: " + details.getCarDetails().getCarNumber()
                     + ", Attendant Name: " + details.getAttendantName() + " )")
                     .forEach(list::add); });
         if (list.isEmpty())
@@ -106,6 +109,19 @@ public class ParkingLotAllotment {
                                 "  Slot Number: " + location.getSlotNumber()).forEach(list::add));
         if (list.isEmpty())
             throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
+        return list;
+    }
+
+
+    public List<String> getCarLocationBasedOnParkingTime(int minutes) {
+        List<String> list = new ArrayList<>();
+        this.parkingLotList.stream().map(parkingLotSystem -> parkingLotSystem.getCarDetailsBasedOnTime(minutes))
+                .forEachOrdered(parkingDetails -> parkingDetails.stream()
+                    .map(location -> "( Lot Number: " + (location.getLotNumber() + 1) +
+                        ", Slot Number: " + location.getSlotNumber() +
+                        ", Car Number: " + location.getCarDetails().getCarNumber() + " )").forEach(list::add));
+        if (list.isEmpty())
+            throw new ParkingLotException("No vehicle is parked before 30 minutes", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
     }
 }
