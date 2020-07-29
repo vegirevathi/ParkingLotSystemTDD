@@ -3,14 +3,10 @@ package parkinglotsystem.service;
 import parkinglotsystem.enums.DriverType;
 import parkinglotsystem.exception.ParkingLotException;
 import parkinglotsystem.model.Car;
-import parkinglotsystem.utility.ParkingSlotDetails;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static parkinglotsystem.enums.CarDetails.*;
@@ -27,17 +23,16 @@ public class ParkingLotAllotment {
         this.numberOfSlots = numberOfSlots;
         this.parkingLotList = new ArrayList<>();
         IntStream.range(0, numberOfLots)
-                .forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots, attendantName[lotNumber])));
+              .forEach(lotNumber -> parkingLotList.add(new ParkingLotSystem(numberOfSlots, attendantName[lotNumber])));
     }
 
     public void parkVehicle(Car car, DriverType driverType) {
         int bound = numberOfLots;
         IntStream.range(0, bound)
-                .filter(parkingLot -> parkingLotList.get(parkingLot)
-                .isVehicleParked(car))
+                .filter(parkingLot -> parkingLotList.get(parkingLot).isVehicleParked(car))
                 .forEach(parkingLot -> {
-            throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
-        });
+                    throw new ParkingLotException("Vehicle already exists", ParkingLotException.e.ALREADY_PARKED);
+                });
         ParkingLotSystem parkingLotSystem = getParkingLotNumber(car, driverType);
         parkingLotSystem.park(car);
     }
@@ -55,7 +50,7 @@ public class ParkingLotAllotment {
                     allottedLotNumber = lot.get(specificLotForLargeVehicles);
                 }
                 lot.sort(Comparator.comparing(ParkingLotSystem::getVehicleCount));
-                allottedLotNumber =  lot.get(0);
+                allottedLotNumber = lot.get(0);
                 break;
             case HANDICAPPED:
                 int specificLotForHandicapped = 0;
@@ -63,7 +58,7 @@ public class ParkingLotAllotment {
                 if (car.getCarSize() == LARGE) {
                     allottedLotNumber = lot.get(specificLotForHandicapped);
                 }
-                allottedLotNumber =  lot.get(nearestParkingLot);
+                allottedLotNumber = lot.get(nearestParkingLot);
                 break;
         }
         return allottedLotNumber;
@@ -72,30 +67,16 @@ public class ParkingLotAllotment {
     public String getCarLocation(Car car) {
         ParkingLotSystem parkingLotSystem = this.parkingLotList.stream()
                 .filter(lot -> lot.isVehicleParked(car)).findFirst().get();
-        return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem)+1,
+        return String.format("Lot Number: %d  Slot Number: %d", parkingLotList.indexOf(parkingLotSystem) + 1,
                 parkingLotSystem.findCarNumber(car));
     }
 
     public List<String> getCarLocationBasedOnColour(String colour) {
         List<String> list = new ArrayList<>();
-            this.parkingLotList.stream().map(lot -> lot.getCarDetailsBasedOnColour(colour))
-            .forEachOrdered(carLocationBasedOnColour -> carLocationBasedOnColour.stream()
-                    .map(location -> "Lot Number: " + (location.getLotNumber() + 1) +
-                            "  Slot Number: " + location.getSlotNumber()).forEach(list::add));
-        if (list.isEmpty())
-                throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
-        return list;
-    }
-
-    public List<String> getCarLocationBasedOnColourAndCompany(String colour, String company) {
-        List<String> list = new ArrayList<>();
-        parkingLotList.forEach(lot -> {
-            List<ParkingSlotDetails> carsParkingDetails = new ArrayList<>(lot.getCarDetailsBasedOnColour(colour));
-            carsParkingDetails.retainAll(lot.getCarDetailsBasedOnCompany(company));
-            carsParkingDetails.stream().map(details -> "( Lot Number: " + (details.getLotNumber() + 1)
-                    + ", Slot Number: " + details.getSlotNumber() + ", Car Number: " + details.getCarDetails().getCarNumber()
-                    + ", Attendant Name: " + details.getAttendantName() + " )")
-                    .forEach(list::add); });
+        this.parkingLotList.stream().map(lot -> lot.getCarDetailsBasedOnColour(colour))
+                .forEachOrdered(carLocationBasedOnColour -> carLocationBasedOnColour.stream()
+                        .map(location -> "Lot Number: " + (location.getLotNumber() + 1) +
+                                "  Slot Number: " + location.getSlotNumber()).forEach(list::add));
         if (list.isEmpty())
             throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
@@ -117,9 +98,9 @@ public class ParkingLotAllotment {
         List<String> list = new ArrayList<>();
         this.parkingLotList.stream().map(parkingLotSystem -> parkingLotSystem.getCarDetailsBasedOnTime(minutes))
                 .forEachOrdered(parkingDetails -> parkingDetails.stream()
-                    .map(location -> "( Lot Number: " + (location.getLotNumber() + 1) +
-                        ", Slot Number: " + location.getSlotNumber() +
-                        ", Car Number: " + location.getCarDetails().getCarNumber() + " )").forEach(list::add));
+                        .map(location -> "( Lot Number: " + (location.getLotNumber() + 1) +
+                                ", Slot Number: " + location.getSlotNumber() +
+                                ", Car Number: " + location.getCarDetails().getCarNumber() + " )").forEach(list::add));
         if (list.isEmpty())
             throw new ParkingLotException("No vehicle is parked before 30 minutes", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
@@ -129,11 +110,11 @@ public class ParkingLotAllotment {
         List<String> list = new ArrayList<>();
         this.parkingLotList.stream().map(parkingLotSystem -> parkingLotSystem.getCarDetailsBasedOnLotNumber(lotNumber))
                 .forEachOrdered(parkingDetails -> parkingDetails.stream()
-                    .map(details -> "(Lot Number: " + (details.getLotNumber() + 1) +
-                        ", Slot Number: " + details.getSlotNumber() +
-                        ", Car Number: " + details.getCarDetails().getCarNumber() +
-                        ", Car Company: " + details.getCarDetails().getCarCompany() +
-                        ", Car Colour: " + details.getCarDetails().getCarColour() + " )").forEach(list::add));
+                        .map(details -> "(Lot Number: " + (details.getLotNumber() + 1) +
+                                ", Slot Number: " + details.getSlotNumber() +
+                                ", Car Number: " + details.getCarDetails().getCarNumber() +
+                                ", Car Company: " + details.getCarDetails().getCarCompany() +
+                                ", Car Colour: " + details.getCarDetails().getCarColour() + " )").forEach(list::add));
         if (list.isEmpty())
             throw new ParkingLotException("No vehicle is parked in given lot numbers", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
@@ -141,9 +122,22 @@ public class ParkingLotAllotment {
 
     public List<String> getAllParkedCarsInAllLots() {
         List<String> list = new ArrayList<>();
-        this.parkingLotList.stream().map(lot -> lot.getAllParkedVehicles())
+        this.parkingLotList.stream().map(ParkingLotSystem::getAllParkedVehicles)
                 .forEachOrdered(car -> car.stream()
                         .map(location -> "Car Number: " + location.getCarDetails().getCarNumber()).forEach(list::add));
+        if (list.isEmpty())
+            throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
+        return list;
+    }
+
+    public List<String> getCarLocationBasedOnColourAndCompany(String carColour, String carCompany) {
+        List<String> list = new ArrayList<>();
+        this.parkingLotList.stream().map(lot -> lot.getCarDetailsBasedOnColourCompany(carColour, carCompany))
+                .forEachOrdered(carDetailsBasedOnColourCompany -> carDetailsBasedOnColourCompany.stream()
+                        .map(details -> "Lot Number: " + (details.getLotNumber() + 1) +
+                                ", Slot Number: " + details.getSlotNumber() +
+                                ", Car Number: " + details.getCarDetails().getCarNumber() +
+                                ", Attendant Name: " + details.getAttendantName()).forEach(list::add));
         if (list.isEmpty())
             throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;

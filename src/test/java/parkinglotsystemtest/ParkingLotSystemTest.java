@@ -98,7 +98,7 @@ public class ParkingLotSystemTest {
             firstVehicle = new Car("AP 1234", LARGE, "RED");
             parkingLotSystem.unPark(firstVehicle);
         } catch (ParkingLotException e) {
-            Assert.assertEquals("Vehicle is not parked", e.getMessage());
+            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
     }
 
@@ -177,7 +177,7 @@ public class ParkingLotSystemTest {
     public void givenCarWhenParkedInParkingLot_ShouldReturnParkingTime() {
         firstVehicle = new Car("AP 7896", SMALL, "RED");
         parkingLotSystem.park(firstVehicle);
-        LocalDateTime parkedTime = parkingLotSystem.getVehicleParkedTime(firstVehicle);
+        String parkedTime = parkingLotSystem.getVehicleParkedTime(firstVehicle);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
         Assert.assertEquals(LocalDateTime.now().format(format), parkedTime);
     }
@@ -186,7 +186,7 @@ public class ParkingLotSystemTest {
     public void givenCar_WhenNotParkedInParkingLot_ShouldThrowException() {
         try {
             firstVehicle = new Car("AP 7896", SMALL, "RED");
-            LocalDateTime parkedTime = parkingLotSystem.getVehicleParkedTime(firstVehicle);
+            String parkedTime = parkingLotSystem.getVehicleParkedTime(firstVehicle);
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
             Assert.assertEquals(LocalDateTime.now().format(format), parkedTime);
         } catch (ParkingLotException e) {
@@ -362,8 +362,7 @@ public class ParkingLotSystemTest {
         parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
         parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
         List<String> carLocation = parkingLotAllotment.getCarLocationBasedOnColourAndCompany("BLUE", "Toyota");
-        List<String> expectedLocation = Arrays.asList("( Lot Number: 1, Slot Number: 2," +
-                " Car Number: AP 1001, Attendant Name: Ramesh )");
+        List<String> expectedLocation = Arrays.asList("Lot Number: 1, Slot Number: 2, Car Number: AP 1001, Attendant Name: Ramesh");
         Assert.assertEquals(expectedLocation, carLocation);
     }
 

@@ -9,6 +9,7 @@ import parkinglotsystem.utility.ParkingSlotDetails;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ParkingLotSystem {
     private int vehicleCount;
     private int lotNumber;
     private final String attendantName;
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
 
     public ParkingLotSystem(int numberOfSlots, String attendantName) {
         this.attendantName = attendantName;
@@ -108,8 +110,8 @@ public class ParkingLotSystem {
         return this.getSlotDetails(car).getSlotNumber();
     }
 
-    public LocalDateTime getVehicleParkedTime(Car car) {
-        return this.getSlotDetails(car).getParkedTime();
+    public String getVehicleParkedTime(Car car) {
+        return LocalDateTime.now().format(format);
     }
 
     public List<ParkingSlotDetails> getCarDetailsBasedOnColour(String colour) {
@@ -155,6 +157,16 @@ public class ParkingLotSystem {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
                 .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .collect(Collectors.toList());
+        return list;
+    }
+
+    public List<ParkingSlotDetails> getCarDetailsBasedOnColourCompany(String carColour, String carCompany) {
+        List<ParkingSlotDetails> list = this.parkingMap.values()
+                .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarColour().equals(carColour)
+                                    || parkingSlot.getCarDetails().getCarCompany().equals(carCompany))
                 .collect(Collectors.toList());
         return list;
     }
