@@ -485,4 +485,33 @@ public class ParkingLotSystemTest {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
     }
+
+    @Test
+    public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles() {
+        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        firstVehicle = new Car("AP 7896", SMALL, "WHITE");
+        secondVehicle = new Car("AP 7814", SMALL, "RED");
+        thirdVehicle = new Car("AP 1112", SMALL, "RED");
+        fourthVehicle = new Car("AP 1001", LARGE, "RED");
+        fifthVehicle = new Car("AP 1234", LARGE, "RED");
+        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingLotAllotment.getAllParkedCarsInAllLots();
+        List<String> expectedLocation = Arrays.asList("Car Number: AP 7896", "Car Number: AP 1001",
+                                                        "Car Number: AP 7814", "Car Number: AP 1234", "Car Number: AP 1112");
+        Assert.assertEquals(expectedLocation, carLocation);
+    }
+
+    @Test
+    public void givenCars_WhenParkedInSlotsAndLots_ShouldThrowException_WhenVehiclesNotFound() {
+        try {
+            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            parkingLotAllotment.getAllParkedCarsInAllLots();
+        } catch (ParkingLotException e) {
+            Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
+        }
+    }
 }

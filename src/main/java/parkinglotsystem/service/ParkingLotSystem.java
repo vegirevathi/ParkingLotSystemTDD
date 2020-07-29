@@ -150,4 +150,12 @@ public class ParkingLotSystem {
                 .collect(Collectors.toList());
         return list;
     }
+
+    public List<ParkingSlotDetails> getAllParkedVehicles() {
+        List<ParkingSlotDetails> list = this.parkingMap.values()
+                .stream()
+                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .collect(Collectors.toList());
+        return list;
+    }
 }

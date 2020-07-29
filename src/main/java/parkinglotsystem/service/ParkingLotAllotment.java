@@ -138,4 +138,14 @@ public class ParkingLotAllotment {
             throw new ParkingLotException("No vehicle is parked in given lot numbers", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         return list;
     }
+
+    public List<String> getAllParkedCarsInAllLots() {
+        List<String> list = new ArrayList<>();
+        this.parkingLotList.stream().map(lot -> lot.getAllParkedVehicles())
+                .forEachOrdered(car -> car.stream()
+                        .map(location -> "Car Number: " + location.getCarDetails().getCarNumber()).forEach(list::add));
+        if (list.isEmpty())
+            throw new ParkingLotException("No such car present", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
+        return list;
+    }
 }
