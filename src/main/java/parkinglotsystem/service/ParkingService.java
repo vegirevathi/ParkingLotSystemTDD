@@ -11,14 +11,14 @@ import java.util.stream.IntStream;
 
 import static parkinglotsystem.enums.CarDetails.*;
 
-public class ParkingLotAllotment {
+public class ParkingService {
 
     private final int numberOfLots;
     private final int numberOfSlots;
     public ArrayList<ParkingLotSystem> parkingLotList;
     private ParkingLotSystem allottedLotNumber;
 
-    public ParkingLotAllotment(int numberOfLots, int numberOfSlots, String... attendantName) {
+    public ParkingService(int numberOfLots, int numberOfSlots, String... attendantName) {
         this.numberOfLots = numberOfLots;
         this.numberOfSlots = numberOfSlots;
         this.parkingLotList = new ArrayList<>();

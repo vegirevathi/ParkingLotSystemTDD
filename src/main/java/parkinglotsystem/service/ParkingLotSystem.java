@@ -65,14 +65,14 @@ public class ParkingLotSystem {
     public boolean isVehicleParked(Car car) {
         return parkingMap.values()
                 .stream()
-                .anyMatch(slot -> slot.getCarDetails() == (car));
+                .anyMatch(parkingSlotDetails -> parkingSlotDetails.getCarDetails() == (car));
     }
 
     public void unPark(Car car) {
         int slotNumber = this.findCarNumber(car);
         if (parkingMap.values()
                 .stream()
-                .noneMatch(slot -> slot.getCarDetails() == (car)))
+                .noneMatch(parkingSlotDetails -> parkingSlotDetails.getCarDetails() == (car)))
             throw new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED);
         this.parkingMap.remove(slotNumber, new ParkingSlotDetails(lotNumber, slotNumber, attendantName, car));
         this.vehicleCount--;
@@ -81,7 +81,7 @@ public class ParkingLotSystem {
     public boolean isVehicleUnParked(Car car) {
         return parkingMap.values()
                 .stream()
-                .noneMatch(slot -> slot.getCarDetails() == car);
+                .noneMatch(parkingSlotDetails -> parkingSlotDetails.getCarDetails() == car);
     }
 
     public int getSlotToPark(CarDetails carDetails) {
@@ -100,7 +100,7 @@ public class ParkingLotSystem {
     private ParkingSlotDetails getSlotDetails(Car car) {
         return this.parkingMap.values()
                 .stream()
-                .filter(slot -> car.equals(slot.getCarDetails()))
+                .filter(parkingSlotDetails -> car.equals(parkingSlotDetails.getCarDetails()))
                 .findFirst()
                 .orElseThrow(() ->
                         new ParkingLotException("Vehicle is not parked", ParkingLotException.e.NO_SUCH_VEHICLE_PARKED));
@@ -117,8 +117,8 @@ public class ParkingLotSystem {
     public List<ParkingSlotDetails> getCarDetailsBasedOnColour(String colour) {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
-                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
-                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarColour().equals(colour))
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails().getCarColour().equals(colour))
                 .collect(Collectors.toList());
         return list;
     }
@@ -126,8 +126,8 @@ public class ParkingLotSystem {
     public List<ParkingSlotDetails> getCarDetailsBasedOnCompany(String company) {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
-                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
-                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarCompany().equals(company))
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails().getCarCompany().equals(company))
                 .collect(Collectors.toList());
         return list;
     }
@@ -135,9 +135,9 @@ public class ParkingLotSystem {
     public List<ParkingSlotDetails> getCarDetailsBasedOnTime(int minutes) {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
-                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
-                .filter(parkingSlot -> parkingSlot.getParkedTime() != null)
-                .filter(parkingSlot -> Duration.between(parkingSlot.getParkedTime(),
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getParkedTime() != null)
+                .filter(parkingSlotDetails -> Duration.between(parkingSlotDetails.getParkedTime(),
                         LocalDateTime.now()).toMinutes() <= minutes)
                 .collect(Collectors.toList());
         return list;
@@ -146,9 +146,9 @@ public class ParkingLotSystem {
     public List<ParkingSlotDetails> getCarDetailsBasedOnLotNumber(int lotNumber) {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
-                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
-                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarSize().equals(CarDetails.SMALL))
-                .filter(parkingSlot -> parkingSlot.getCarDetails().getDriverType().equals(DriverType.HANDICAPPED))
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails().getCarSize().equals(CarDetails.SMALL))
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails().getDriverType().equals(DriverType.HANDICAPPED))
                 .collect(Collectors.toList());
         return list;
     }
@@ -156,7 +156,7 @@ public class ParkingLotSystem {
     public List<ParkingSlotDetails> getAllParkedVehicles() {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
-                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails() != null)
                 .collect(Collectors.toList());
         return list;
     }
@@ -164,9 +164,9 @@ public class ParkingLotSystem {
     public List<ParkingSlotDetails> getCarDetailsBasedOnColourCompany(String carColour, String carCompany) {
         List<ParkingSlotDetails> list = this.parkingMap.values()
                 .stream()
-                .filter(parkingSlot -> parkingSlot.getCarDetails() != null)
-                .filter(parkingSlot -> parkingSlot.getCarDetails().getCarColour().equals(carColour)
-                                    || parkingSlot.getCarDetails().getCarCompany().equals(carCompany))
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails() != null)
+                .filter(parkingSlotDetails -> parkingSlotDetails.getCarDetails().getCarColour().equals(carColour)
+                                    || parkingSlotDetails.getCarDetails().getCarCompany().equals(carCompany))
                 .collect(Collectors.toList());
         return list;
     }

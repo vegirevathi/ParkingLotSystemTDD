@@ -5,7 +5,7 @@ import parkinglotsystem.model.Car;
 import parkinglotsystem.observer.AirportSecurity;
 import parkinglotsystem.observer.ParkingLotOwner;
 import parkinglotsystem.enums.DriverType;
-import parkinglotsystem.service.ParkingLotAllotment;
+import parkinglotsystem.service.ParkingService;
 import parkinglotsystem.service.ParkingLotSystem;
 import org.junit.Assert;
 import org.junit.Before;
@@ -196,18 +196,18 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "RED");
         secondVehicle = new Car("AP 7814", SMALL, "RED");
         thirdVehicle = new Car("AP 1112", SMALL, "WHITE");
         fourthVehicle = new Car("AP 1001", LARGE, "RED");
         fifthVehicle = new Car("AP 1234", LARGE, "RED");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        String carLocation = parkingLotAllotment.getCarLocation(fifthVehicle);
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        String carLocation = parkingService.getCarLocation(fifthVehicle);
         String expectedLocation = "Lot Number: 2  Slot Number: 2";
         Assert.assertEquals(expectedLocation, carLocation);
     }
@@ -215,17 +215,17 @@ public class ParkingLotSystemTest {
     @Test
     public void givenSameCar_WhenParkedInDifferentLotAndSlot_ShouldThrowException() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "RED");
             secondVehicle = new Car("AP 7814", SMALL, "RED");
             thirdVehicle = new Car("AP 1112", SMALL, "WHITE");
             fourthVehicle = new Car("AP 1001", LARGE, "RED");
             fifthVehicle = new Car("AP 1234", LARGE, "RED");
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.ALREADY_PARKED, e.type);
         }
@@ -234,17 +234,17 @@ public class ParkingLotSystemTest {
     @Test
     public void givenMultipleParkingLots_WhenAllSlotsAreFilled_ShouldThrowException() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(2, 2, attendantName);
+            ParkingService parkingService = new ParkingService(2, 2, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "RED");
             secondVehicle = new Car("AP 7814", SMALL, "RED");
             thirdVehicle = new Car("AP 1112", SMALL, "WHITE");
             fourthVehicle = new Car("AP 1001", LARGE, "RED");
             fifthVehicle = new Car("AP 1234", LARGE, "RED");
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.PARKING_LOT_FULL, e.type);
         }
@@ -252,37 +252,37 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForHandicappedDriver() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "RED");
         secondVehicle = new Car("AP 7814", SMALL, "RED");
         thirdVehicle = new Car("AP 1112", SMALL, "WHITE");
         fourthVehicle = new Car("AP 1001", LARGE, "RED");
         fifthVehicle = new Car("AP 1234", LARGE, "RED");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.HANDICAPPED);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.HANDICAPPED);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.HANDICAPPED);
-        String carLocation = parkingLotAllotment.getCarLocation(fifthVehicle);
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.HANDICAPPED);
+        parkingService.parkVehicle(thirdVehicle, DriverType.HANDICAPPED);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.HANDICAPPED);
+        String carLocation = parkingService.getCarLocation(fifthVehicle);
         String expectedLocation = "Lot Number: 1  Slot Number: 4";
         Assert.assertEquals(expectedLocation, carLocation);
     }
 
     @Test
     public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForLargeVehicles() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "RED");
         secondVehicle = new Car("AP 7814", SMALL, "RED");
         thirdVehicle = new Car("AP 1112", SMALL, "WHITE");
         fourthVehicle = new Car("AP 1001", LARGE, "RED");
         fifthVehicle = new Car("AP 1234", LARGE, "RED");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        String carLocation1 = parkingLotAllotment.getCarLocation(fourthVehicle);
-        String carLocation2 = parkingLotAllotment.getCarLocation(fifthVehicle);
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        String carLocation1 = parkingService.getCarLocation(fourthVehicle);
+        String carLocation2 = parkingService.getCarLocation(fifthVehicle);
         String expectedLocation1 = "Lot Number: 1  Slot Number: 2";
         String expectedLocation2 = "Lot Number: 2  Slot Number: 2";
         Assert.assertEquals(expectedLocation1, carLocation1);
@@ -291,19 +291,19 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCar_WhenParkedInProvidedLotAndSlot_ShouldReturnCarLocation_ForLargeVehicles_Handicapped() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "RED");
         secondVehicle = new Car("AP 7814", LARGE, "RED");
         thirdVehicle = new Car("AP 1112", SMALL, "WHITE");
         fourthVehicle = new Car("AP 1001", LARGE, "RED");
         fifthVehicle = new Car("AP 1234", LARGE, "RED");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.HANDICAPPED);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.HANDICAPPED);
-        String carLocation1 = parkingLotAllotment.getCarLocation(fifthVehicle);
-        String carLocation2 = parkingLotAllotment.getCarLocation(secondVehicle);
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.HANDICAPPED);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.HANDICAPPED);
+        String carLocation1 = parkingService.getCarLocation(fifthVehicle);
+        String carLocation2 = parkingService.getCarLocation(secondVehicle);
         String expectedLocation1 = "Lot Number: 1  Slot Number: 3";
         String expectedLocation2 = "Lot Number: 1  Slot Number: 2";
         Assert.assertEquals(expectedLocation1, carLocation1);
@@ -312,37 +312,37 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles_WhenSearchedForColour() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "WHITE");
         secondVehicle = new Car("AP 7814", SMALL, "RED");
         thirdVehicle = new Car("AP 1112", SMALL, "RED");
         fourthVehicle = new Car("AP 1001", LARGE, "RED");
         fifthVehicle = new Car("AP 1234", LARGE, "RED");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        List<String> carLocation = parkingLotAllotment.getCarLocationBasedOnColour("WHITE");
-        List<String> expectedLocation = Arrays.asList(parkingLotAllotment.getCarLocation(firstVehicle));
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingService.getCarLocationBasedOnColour("WHITE");
+        List<String> expectedLocation = Arrays.asList(parkingService.getCarLocation(firstVehicle));
         Assert.assertEquals(expectedLocation, carLocation);
     }
 
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldThrowException_WhenSearchedColourNotFound() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "RED");
             secondVehicle = new Car("AP 7814", SMALL, "RED");
             thirdVehicle = new Car("AP 1112", SMALL, "RED");
             fourthVehicle = new Car("AP 1001", LARGE, "RED");
             fifthVehicle = new Car("AP 1234", LARGE, "RED");
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.getCarLocationBasedOnColour("WHITE");
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            parkingService.getCarLocationBasedOnColour("WHITE");
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
@@ -350,18 +350,18 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles_WhenSearchedForColourAndCompany() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
         secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
         thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
         fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "TOYOTA");
         fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        List<String> carLocation = parkingLotAllotment.getCarLocationBasedOnColourAndCompany("BLUE", "Toyota");
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingService.getCarLocationBasedOnColourAndCompany("BLUE", "Toyota");
         List<String> expectedLocation = Arrays.asList("Lot Number: 1, Slot Number: 2, Car Number: AP 1001, Attendant Name: Ramesh");
         Assert.assertEquals(expectedLocation, carLocation);
     }
@@ -369,18 +369,18 @@ public class ParkingLotSystemTest {
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldThrowException_WhenSearchedColourAndCompanyNotFound() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
             secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
             thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
             fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "TOYOTA");
             fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.getCarLocationBasedOnColourAndCompany("BLUE", "TOYOTA");
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            parkingService.getCarLocationBasedOnColourAndCompany("BLUE", "TOYOTA");
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
@@ -388,37 +388,37 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles_WhenSearchedForCompany() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
         secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
         thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
         fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "BMW");
         fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        List<String> carLocation = parkingLotAllotment.getCarLocationBasedOnCompany("BMW");
-        List<String> expectedLocation = Arrays.asList(parkingLotAllotment.getCarLocation(fourthVehicle));
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingService.getCarLocationBasedOnCompany("BMW");
+        List<String> expectedLocation = Arrays.asList(parkingService.getCarLocation(fourthVehicle));
         Assert.assertEquals(expectedLocation, carLocation);
     }
 
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldThrowException_WhenSearchedCompanyNotFound() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
             secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
             thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
             fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "TOYOTA");
             fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.getCarLocationBasedOnCompany("BMW");
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            parkingService.getCarLocationBasedOnCompany("BMW");
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
@@ -427,19 +427,19 @@ public class ParkingLotSystemTest {
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles_WhenSearchedBasedOnTime() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA");
             secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA");
             thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA");
             fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "BMW");
             fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA");
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-            List<String> carLocation = parkingLotAllotment.getCarLocationBasedOnParkingTime(30);
-            List<String> expectedLocation = Arrays.asList(parkingLotAllotment.getCarLocation(fourthVehicle));
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            List<String> carLocation = parkingService.getCarLocationBasedOnParkingTime(30);
+            List<String> expectedLocation = Arrays.asList(parkingService.getCarLocation(fourthVehicle));
             Assert.assertEquals(expectedLocation, carLocation);
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
@@ -448,18 +448,18 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenParkingLot_WhenSearchedForSmallCarsWithHandicapDrivers_ShouldReturnListOfVehicles() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", LARGE, "BLACK", "TOYOTA", DriverType.HANDICAPPED);
         secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA", DriverType.NORMAL);
         thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA", DriverType.NORMAL);
         fourthVehicle = new Car("AP 1001", SMALL, "BLUE", "TOYOTA", DriverType.HANDICAPPED);
         fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA", DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.HANDICAPPED);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.HANDICAPPED);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        List<String> carLocation = parkingLotAllotment.getCarLocationOfCarForGivenParkingLot(1);
+        parkingService.parkVehicle(firstVehicle, DriverType.HANDICAPPED);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.HANDICAPPED);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingService.getCarLocationOfCarForGivenParkingLot(1);
         List<String> expectedLocation = Arrays.asList("(Lot Number: 1, Slot Number: 2," +
                 " Car Number: AP 1001, Car Company: TOYOTA, Car Colour: BLUE )");
         Assert.assertEquals(expectedLocation, carLocation);
@@ -468,18 +468,18 @@ public class ParkingLotSystemTest {
     @Test
     public void givenParkingLot_WhenSmallCarsWithHandicapDriversAreNotFound_ShouldThrowException() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
             firstVehicle = new Car("AP 7896", SMALL, "BLACK", "TOYOTA", DriverType.NORMAL);
             secondVehicle = new Car("AP 7814", SMALL, "RED", "TOYOTA", DriverType.NORMAL);
             thirdVehicle = new Car("AP 1112", SMALL, "RED", "TOYOTA", DriverType.NORMAL);
             fourthVehicle = new Car("AP 1001", LARGE, "BLUE", "TOYOTA", DriverType.NORMAL);
             fifthVehicle = new Car("AP 1234", LARGE, "RED", "TOYOTA", DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-            parkingLotAllotment.getCarLocationBasedOnColourAndCompany("BLUE", "TOYOTA");
+            parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+            parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+            parkingService.getCarLocationBasedOnColourAndCompany("BLUE", "TOYOTA");
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
@@ -487,18 +487,18 @@ public class ParkingLotSystemTest {
 
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldReturnListOfVehicles() {
-        ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
+        ParkingService parkingService = new ParkingService(3, 5, attendantName);
         firstVehicle = new Car("AP 7896", SMALL, "WHITE");
         secondVehicle = new Car("AP 7814", SMALL, "RED");
         thirdVehicle = new Car("AP 1112", SMALL, "RED");
         fourthVehicle = new Car("AP 1001", LARGE, "RED");
         fifthVehicle = new Car("AP 1234", LARGE, "RED");
-        parkingLotAllotment.parkVehicle(firstVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(secondVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(thirdVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fourthVehicle, DriverType.NORMAL);
-        parkingLotAllotment.parkVehicle(fifthVehicle, DriverType.NORMAL);
-        List<String> carLocation = parkingLotAllotment.getAllParkedCarsInAllLots();
+        parkingService.parkVehicle(firstVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(secondVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(thirdVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fourthVehicle, DriverType.NORMAL);
+        parkingService.parkVehicle(fifthVehicle, DriverType.NORMAL);
+        List<String> carLocation = parkingService.getAllParkedCarsInAllLots();
         List<String> expectedLocation = Arrays.asList("Car Number: AP 7896", "Car Number: AP 1001",
                                                         "Car Number: AP 7814", "Car Number: AP 1234", "Car Number: AP 1112");
         Assert.assertEquals(expectedLocation, carLocation);
@@ -507,8 +507,8 @@ public class ParkingLotSystemTest {
     @Test
     public void givenCars_WhenParkedInSlotsAndLots_ShouldThrowException_WhenVehiclesNotFound() {
         try {
-            ParkingLotAllotment parkingLotAllotment = new ParkingLotAllotment(3, 5, attendantName);
-            parkingLotAllotment.getAllParkedCarsInAllLots();
+            ParkingService parkingService = new ParkingService(3, 5, attendantName);
+            parkingService.getAllParkedCarsInAllLots();
         } catch (ParkingLotException e) {
             Assert.assertEquals(ParkingLotException.e.NO_SUCH_VEHICLE_PARKED, e.type);
         }
